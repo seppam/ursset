@@ -1,39 +1,68 @@
 @import "tailwindcss";
 
 @theme {
+  /* Brand */
   --color-brand: #0f9d6e;
   --color-brand-dark: #0a7a54;
+  --color-brand-deep: #064e38;
   --color-brand-soft: #e6f6ef;
+  --color-accent: #fbbf24;
+  /* Neutrals */
   --color-ink: #0f172a;
-  --color-muted: #64748b;
+  --color-muted: #5b6b80; /* 5.4:1 on white, passes AA for body text */
   --color-line: #e2e8f0;
+  --color-surface: #f6f8f7;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Radius and elevation scale */
+  --radius-card: 1.25rem;
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04);
+  --shadow-raised: 0 8px 24px rgb(15 23 42 / 0.08);
 }
 
 html,
 body {
-  background: #f6f8f7;
+  background: var(--color-surface);
   color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* One consistent keyboard focus ring */
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
 .card {
   background: #fff;
   border: 1px solid var(--color-line);
-  border-radius: 1.25rem;
-  box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
 }
 
 .btn-main {
   display: inline-flex;
   width: 100%;
+  min-height: 48px;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   border-radius: 9999px;
   background: var(--color-brand);
-  padding: 0.95rem 1.25rem;
+  padding: 0.85rem 1.25rem;
   font-weight: 700;
   color: #fff;
   transition: background 0.15s, transform 0.05s;
@@ -51,6 +80,7 @@ body {
 
 .btn-ghost {
   display: inline-flex;
+  min-height: 44px;
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
@@ -68,12 +98,45 @@ body {
 .chip {
   display: inline-flex;
   align-items: center;
+  gap: 0.25rem;
   border-radius: 9999px;
   background: var(--color-brand-soft);
   padding: 0.2rem 0.65rem;
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--color-brand-dark);
+}
+.chip-neutral {
+  background: #f1f5f9;
+  color: var(--color-muted);
+}
+
+/* Section label and numeric emphasis */
+.eyebrow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Skeleton loading */
+.skeleton {
+  border-radius: 0.5rem;
+  background: linear-gradient(90deg, #eef2f1 25%, #f8faf9 50%, #eef2f1 75%);
+  background-size: 200% 100%;
+  animation: skeleton 1.2s ease-in-out infinite;
+}
+@keyframes skeleton {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
 }
 
 input[type="range"] {

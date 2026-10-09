@@ -1,24 +1,29 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { usePrivy } from "@privy-io/react-auth";
+import { OPEN_MENU_EVENT } from "~~/components/BottomNav";
+import { ChartIcon, CloseIcon, CoinIcon, HomeIcon, KeyIcon, MenuIcon, PlusIcon, ShieldIcon } from "~~/components/Icons";
 import { Logo } from "~~/components/Logo";
 import { EXPLORER_URL } from "~~/lib/chain";
 import { rp, short } from "~~/lib/format";
 import { useMe } from "~~/lib/hooks";
 import { useI18n } from "~~/lib/i18n";
 
-type Item = { href: string; label: string; icon: string };
+type Item = { href: string; label: string; icon: ReactNode };
 
 const investor: Item[] = [
-  { href: "/", label: "Beranda", icon: "🏠" },
-  { href: "/portfolio", label: "Portofolio", icon: "📈" },
+  { href: "/", label: "Beranda", icon: <HomeIcon size={20} /> },
+  { href: "/portfolio", label: "Portofolio", icon: <ChartIcon size={20} /> },
+  { href: "/#cara-kerja", label: "Cara kerja", icon: <ShieldIcon size={20} /> },
 ];
 const owner: Item[] = [
-  { href: "/operator#listing", label: "Daftarkan properti", icon: "➕" },
-  { href: "/operator#rent", label: "Setor sewa", icon: "💸" },
+  { href: "/operator", label: "Kelola properti", icon: <KeyIcon size={20} /> },
+  { href: "/operator#listing", label: "Daftarkan properti", icon: <PlusIcon size={20} /> },
+  { href: "/operator#rent", label: "Setor sewa", icon: <CoinIcon size={20} /> },
 ];
 
 export function Header() {
@@ -32,6 +37,11 @@ export function Header() {
   // Close the drawer after any navigation, and lock page scroll while it is open.
   useEffect(() => setOpen(false), [path]);
   useEffect(() => {
+    const openMenu = () => setOpen(true);
+    window.addEventListener(OPEN_MENU_EVENT, openMenu);
+    return () => window.removeEventListener(OPEN_MENU_EVENT, openMenu);
+  }, []);
+  useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
@@ -43,9 +53,11 @@ export function Header() {
       key={item.href}
       href={item.href}
       onClick={() => setOpen(false)}
-      className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold ${path === item.href.split("#")[0] ? "bg-brand-soft text-brand-dark" : "text-ink hover:bg-slate-50"}`}
+      className={`flex min-h-[44px] items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold ${!item.href.includes("#") && path === item.href ? "bg-brand-soft text-brand-dark" : "text-ink hover:bg-slate-50"}`}
     >
-      <span aria-hidden>{item.icon}</span>
+      <span aria-hidden className="text-muted">
+        {item.icon}
+      </span>
       {t(item.label)}
     </Link>
   );
@@ -53,19 +65,30 @@ export function Header() {
   return (
     <>
       <header className="sticky top-0 z-20 border-b border-line bg-white/90 backdrop-blur">
-        <div className="mx-auto flex max-w-md items-center justify-between gap-2 px-4 py-3">
+        <div className="mx-auto flex max-w-md items-center md:max-w-5xl justify-between gap-2 px-4 py-3">
           <div className="flex items-center gap-2">
             <button
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-white text-lg hover:bg-slate-50"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-white hover:bg-slate-50"
               onClick={() => setOpen(true)}
               aria-label={t("Menu")}
               aria-expanded={open}
             >
-              ☰
+              <MenuIcon size={20} />
             </button>
-            <Link href="/" aria-label="URSSET">
+            <Link href="/" aria-label="URSSET" className="flex min-h-[44px] items-center">
               <Logo size={30} />
             </Link>
+            <nav aria-label={t("Navigasi utama")} className="ml-4 hidden items-center gap-1 md:flex">
+              {[...investor.slice(0, 2), owner[0]].map(i => (
+                <Link
+                  key={i.href}
+                  href={i.href}
+                  className={`rounded-full px-3 py-2 text-sm font-semibold ${path === i.href ? "bg-brand-soft text-brand-dark" : "text-muted hover:text-ink"}`}
+                >
+                  {t(i.label)}
+                </Link>
+              ))}
+            </nav>
           </div>
           {!ready ? (
             <span className="btn-ghost pointer-events-none opacity-50">{t("Masuk")}</span>
@@ -93,11 +116,11 @@ export function Header() {
           <div className="flex items-center justify-between">
             <Logo size={34} />
             <button
-              className="h-9 w-9 rounded-full text-lg text-muted hover:bg-slate-100"
+              className="flex h-11 w-11 items-center justify-center rounded-full text-muted hover:bg-slate-100"
               onClick={() => setOpen(false)}
               aria-label={t("Tutup menu")}
             >
-              ✕
+              <CloseIcon size={20} />
             </button>
           </div>
           <p className="mt-1 text-xs text-muted">
@@ -105,13 +128,11 @@ export function Header() {
           </p>
 
           <nav className="mt-4 flex-1 overflow-auto">
-            <p className="px-3 pb-1 text-xs font-bold uppercase tracking-wide text-muted">{t("Investor")}</p>
+            <p className="eyebrow px-3 pb-1">{t("Investor")}</p>
             {investor.map(link)}
-            <p className="px-3 pb-1 pt-4 text-xs font-bold uppercase tracking-wide text-muted">
-              {t("Pemilik properti")}
-            </p>
+            <p className="eyebrow px-3 pb-1 pt-4">{t("Pemilik properti")}</p>
             {owner.map(link)}
-            <p className="px-3 pb-1 pt-4 text-xs font-bold uppercase tracking-wide text-muted">{t("Bahasa")}</p>
+            <p className="eyebrow px-3 pb-1 pt-4">{t("Bahasa")}</p>
             <div className="flex gap-2 px-3">
               {(["id", "en"] as const).map(l => (
                 <button
