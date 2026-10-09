@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ShieldIcon } from "~~/components/Icons";
 import { Progress } from "~~/components/Progress";
 import { rp } from "~~/lib/format";
 import { useSaleInfo } from "~~/lib/hooks";
@@ -29,6 +30,33 @@ export function PropertyHero({ rounded = true }: { rounded?: boolean }) {
   );
 }
 
+/** Small trust chips shared by cards and the detail page. */
+export function TrustChips() {
+  const t = useT();
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      <span className="chip">
+        <ShieldIcon size={14} />
+        {t("Terverifikasi onchain")}
+      </span>
+      <span className="chip chip-neutral">{t("Data uji")}</span>
+    </div>
+  );
+}
+
+export function PropertyCardSkeleton() {
+  return (
+    <div className="card overflow-hidden" aria-hidden>
+      <div className="skeleton h-40 rounded-none" />
+      <div className="space-y-3 p-4">
+        <div className="skeleton h-4 w-2/3" />
+        <div className="skeleton h-3 w-full" />
+        <div className="skeleton h-12 w-full rounded-full" />
+      </div>
+    </div>
+  );
+}
+
 function CardBody() {
   const t = useT();
   const { info, meta } = useProp();
@@ -37,27 +65,26 @@ function CardBody() {
     sale.totalUnits !== undefined && sale.unitsLeft !== undefined ? Number(sale.totalUnits - sale.unitsLeft) : 0;
   const total = Number(sale.totalUnits ?? 0n);
   return (
-    <Link href={`/p/${info.id}`} className="card block overflow-hidden transition hover:shadow-md">
+    <Link href={`/p/${info.id}`} className="card flex h-full flex-col overflow-hidden transition hover:shadow-md">
       <PropertyHero />
-      <div className="p-4">
-        <div className="grid grid-cols-3 gap-2 text-center text-sm">
-          <div>
-            <p className="font-extrabold">{meta?.rooms ?? "–"}</p>
-            <p className="text-xs text-muted">{t("kamar")}</p>
-          </div>
-          <div>
-            <p className="font-extrabold">{meta ? `${meta.occupancy}%` : "–"}</p>
-            <p className="text-xs text-muted">{t("terisi")}</p>
-          </div>
-          <div>
-            <p className="font-extrabold">{rp(sale.unitPrice ?? 10_000n)}</p>
-            <p className="text-xs text-muted">{t("per unit")}</p>
-          </div>
+      <div className="flex flex-1 flex-col p-4">
+        <TrustChips />
+        <p className="mt-3 text-sm text-muted">{t("Mulai dari")}</p>
+        <p className="num text-2xl font-black leading-tight">
+          {rp(sale.unitPrice ?? 10_000n)} <span className="text-sm font-semibold text-muted">/ {t("unit")}</span>
+        </p>
+        <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+          <p className="rounded-xl bg-slate-50 px-3 py-2">
+            <b>{meta?.rooms ?? "–"}</b> <span className="text-muted">{t("kamar")}</span>
+          </p>
+          <p className="rounded-xl bg-slate-50 px-3 py-2">
+            <b>{meta ? `${meta.occupancy}%` : "–"}</b> <span className="text-muted">{t("terisi")}</span>
+          </p>
         </div>
-        <div className="mt-3">
+        <div className="mt-3 flex-1">
           <Progress value={sold} max={total} />
         </div>
-        <span className="btn-main mt-3">{t("Mulai urunan")}</span>
+        <span className="btn-main mt-4">{t("Mulai urunan")}</span>
       </div>
     </Link>
   );

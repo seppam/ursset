@@ -7,6 +7,28 @@ export type Lang = "id" | "en";
 // Indonesian is the source text and doubles as the key. Missing English falls back to Indonesian.
 const en: Record<string, string> = {
   // header and shared
+  // ux refresh
+  "Navigasi utama": "Main navigation",
+  Kelola: "Manage",
+  "Cara kerja": "How it works",
+  "Kelola properti": "Manage properties",
+  "Lihat properti": "View properties",
+  "Tanpa dompet kripto, tanpa biaya gas untuk kamu.": "No crypto wallet to set up, no gas fees for you.",
+  "Bukti kepemilikan dan setoran sewa tercatat di blockchain, jadi siapa pun bisa memeriksanya. Wallet dibuat otomatis untukmu.":
+    "Proof of ownership and rent deposits are recorded on the blockchain, so anyone can check them. Your wallet is created automatically.",
+  "Belum ada properti. Pemilik bisa mendaftarkan lewat menu Kelola.":
+    "No properties yet. Owners can list one from the Manage menu.",
+  "Terverifikasi onchain": "Verified onchain",
+  "Data uji": "Test data",
+  "Mulai dari": "From",
+  unit: "unit",
+  "Cara kerjanya di properti ini": "How it works for this property",
+  "Kamu membeli unit; 1 unit = bagian kecil properti ini.": "You buy units; 1 unit = a small share of this property.",
+  "Sewa bulanan yang disetor pemilik dibagi sesuai jumlah unitmu.":
+    "Monthly rent deposited by the owner is split by how many units you hold.",
+  "Jual unit kapan saja di pasar sekunder lewat Portofolio.":
+    "Sell units any time on the secondary market via Portfolio.",
+  "Belum ada unit": "No units yet",
   Portofolio: "Portfolio",
   Masuk: "Sign in",
   Keluar: "Sign out",

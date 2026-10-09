@@ -5,8 +5,9 @@ import Link from "next/link";
 import { usePrivy } from "@privy-io/react-auth";
 import { isAddress } from "viem";
 import { useReadContract, useReadContracts } from "wagmi";
+import { ChartIcon, CoinIcon, SwapIcon } from "~~/components/Icons";
 import { IntInput } from "~~/components/IntInput";
-import { PropertyCard } from "~~/components/PropertyCard";
+import { PropertyCard, PropertyCardSkeleton } from "~~/components/PropertyCard";
 import { txUrl } from "~~/lib/chain";
 import { friendlyError, num, rp, short } from "~~/lib/format";
 import { abis } from "~~/lib/generated/ursset";
@@ -18,7 +19,7 @@ type Section = "claim" | "sell" | "market" | "send";
 type Notice = { tone: "ok" | "bad"; text: string; hash?: string; where: Section };
 
 const sectionOf = (key: string): Section => (key === "claim" || key === "sell" || key === "send" ? key : "market");
-const input = "mt-1 w-full rounded-lg border border-line px-3 py-2 text-sm text-ink";
+const input = "mt-1 min-h-[44px] w-full rounded-lg border border-line px-3 py-2 text-sm text-ink";
 
 function PropertyPortfolio() {
   const t = useT();
@@ -244,7 +245,10 @@ export default function Portfolio() {
 
   if (!authenticated) {
     return (
-      <div className="card mt-4 p-6 text-center">
+      <div className="card mx-auto mt-4 max-w-md p-6 text-center">
+        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-soft text-brand-dark">
+          <ChartIcon size={28} />
+        </div>
         <h1 className="text-xl font-extrabold">{t("Portofoliomu")}</h1>
         <p className="mt-1 text-sm text-muted">{t("Masuk untuk melihat unit dan sewa yang masuk.")}</p>
         <button className="btn-main mt-4" onClick={login}>
@@ -260,28 +264,57 @@ export default function Portfolio() {
 
   return (
     <div className="space-y-5">
-      <section className="card p-5">
-        <p className="text-sm text-muted">{t("Saldo Rupiah uji")}</p>
-        <p className="text-3xl font-black">{rp(me.idr)}</p>
-        {!me.verified && <p className="chip mt-2">{t("Belum terverifikasi")}</p>}
+      <section className="rounded-[1.5rem] bg-gradient-to-br from-brand to-brand-deep p-5 text-white shadow-[var(--shadow-raised)]">
+        <p className="text-sm text-white/80">{t("Saldo Rupiah uji")}</p>
+        <p className="num text-4xl font-black">{rp(me.idr)}</p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <span className="chip bg-white/15 text-white">{t("Data uji")}</span>
+          {!me.verified && <span className="chip bg-amber-100 text-amber-900">{t("Belum terverifikasi")}</span>}
+        </div>
+        <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs font-semibold">
+          {[
+            { href: "/", label: "Urunan", Icon: CoinIcon },
+            { href: "#properti-kamu", label: "Ambil sewa", Icon: ChartIcon },
+            { href: "#properti-kamu", label: "Jual unit", Icon: SwapIcon },
+          ].map(({ href, label, Icon }) => (
+            <Link
+              key={label}
+              href={href}
+              className="flex min-h-[64px] flex-col items-center justify-center gap-1 rounded-2xl bg-white/15 hover:bg-white/25"
+            >
+              <Icon size={20} />
+              {t(label)}
+            </Link>
+          ))}
+        </div>
       </section>
 
-      {(isLoading || !ready) && <p className="text-center text-sm text-muted">{t("Memuat…")}</p>}
+      {(isLoading || !ready) && (
+        <div className="grid gap-4 md:grid-cols-2" aria-busy>
+          <PropertyCardSkeleton />
+          <PropertyCardSkeleton />
+        </div>
+      )}
 
       {ready && (
         <>
-          <section className="space-y-3">
+          <section id="properti-kamu" className="scroll-mt-20 space-y-3">
             <h2 className="px-1 text-lg font-extrabold">{t("Properti kamu")}</h2>
             {owned.length === 0 && (
-              <p className="card p-4 text-sm text-muted">
-                {t("Kamu belum punya unit di properti mana pun. Mulai dari yang di bawah.")}
-              </p>
+              <div className="card p-5 text-center">
+                <p className="font-extrabold">{t("Belum ada unit")}</p>
+                <p className="mt-1 text-sm text-muted">
+                  {t("Kamu belum punya unit di properti mana pun. Mulai dari yang di bawah.")}
+                </p>
+              </div>
             )}
-            {owned.map(p => (
-              <PropertyProvider key={p.id} info={p}>
-                <PropertyPortfolio />
-              </PropertyProvider>
-            ))}
+            <div className="grid gap-4 md:grid-cols-2 md:items-start">
+              {owned.map(p => (
+                <PropertyProvider key={p.id} info={p}>
+                  <PropertyPortfolio />
+                </PropertyProvider>
+              ))}
+            </div>
           </section>
 
           {others.length > 0 && (
@@ -290,9 +323,11 @@ export default function Portfolio() {
                 <h2 className="text-lg font-extrabold">{t("Properti yang sebaiknya kamu miliki sekarang")}</h2>
                 <p className="text-sm text-muted">{t("Tambah unit atau mulai dari properti lain, mulai Rp10.000.")}</p>
               </div>
-              {others.map(p => (
-                <PropertyCard key={p.id} info={p} />
-              ))}
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {others.map(p => (
+                  <PropertyCard key={p.id} info={p} />
+                ))}
+              </div>
             </section>
           )}
         </>
