@@ -10,7 +10,8 @@ Built for the [Ethereum Jakarta Hackathon 2026](https://www.hackquest.io/hackath
 | --- | --- |
 | Author | Muhamad Septian Pamungkas (solo builder) |
 | Live app | https://ursset.vercel.app |
-| Demo video | _TODO: video URL_ |
+| Demo video | https://youtu.be/lO4ZWxfpNtI |
+| Pitch video | https://youtu.be/jGRaYYAL9Hg |
 | Chain | Robinhood Chain Testnet (chain ID 46630) |
 | Explorer | https://explorer.testnet.chain.robinhood.com |
 
