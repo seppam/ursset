@@ -6,7 +6,7 @@ import { createPublicClient, createWalletClient, getAddress, http, isAddress, pa
 import { privateKeyToAccount } from "viem/accounts";
 
 const SERVER_RPC = process.env.SERVER_RPC_URL || "https://rpc.testnet.chain.robinhood.com";
-const GAS_DRIP = parseEther(process.env.GAS_DRIP_ETH || "0.0003");
+const GAS_DRIP = parseEther(process.env.GAS_DRIP_ETH || "0.0001");
 const MIN_GAS = GAS_DRIP / 3n;
 export const MAX_BALANCE = 5_000_000n;
 

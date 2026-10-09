@@ -4596,6 +4596,7 @@ __metadata:
     "@scaffold-ui/components": "npm:^0.1.12"
     "@scaffold-ui/debug-contracts": "npm:^0.1.11"
     "@scaffold-ui/hooks": "npm:^0.1.8"
+    "@stripe/stripe-js": "npm:^10.0.0"
     "@tailwindcss/postcss": "npm:4.2.4"
     "@tanstack/react-query": "npm:~5.100.5"
     "@trivago/prettier-plugin-sort-imports": "npm:~6.0.2"
@@ -5528,6 +5529,13 @@ __metadata:
   peerDependencies:
     "@stripe/stripe-js": ^1.46.0
   checksum: 10/b8eca3ed479be09b3312ef654fc316a6e9f02ec6ea728ac89c3942d1bb6451fbae2b6990b7941f3b6201e8edc8b64e84348d469841d7e040ed392ebc9a1dfe87
+  languageName: node
+  linkType: hard
+
+"@stripe/stripe-js@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "@stripe/stripe-js@npm:10.0.0"
+  checksum: 10/06db09e9cc655d6f593f417cc524c9008c275d0894384d78f85f2a1a6bd5130179671ed19c6cca04020d49d7f5ba0334d7cec1564b1c13af8bb9fdb5a52afef1
   languageName: node
   linkType: hard
 

@@ -2,10 +2,14 @@
 
 import { useCallback } from "react";
 import { DEPLOY_BLOCK, distributor, idr, isDeployed, kyc, market, sale, token } from "./contracts";
+import { abis } from "./generated/ursset";
 import { usePrivy } from "@privy-io/react-auth";
 import { useQuery } from "@tanstack/react-query";
 import { parseEventLogs } from "viem";
 import { useAccount, useBalance, usePublicClient, useReadContracts, useWriteContract } from "wagmi";
+
+// Contracts bubble up errors raised by the token (for example NotVerified), so simulation needs those definitions too.
+const tokenErrors = abis.PropertyToken.filter(item => item.type === "error");
 
 /** Everything the signed-in investor needs on screen, refreshed every few seconds. */
 export function useMe() {
@@ -71,7 +75,7 @@ export function useSend() {
   return useCallback(
     async (request: any) => {
       // Simulating first lets viem decode contract errors (for example NotVerified) into readable messages.
-      await client!.simulateContract({ ...request, account });
+      await client!.simulateContract({ ...request, abi: [...request.abi, ...tokenErrors], account });
       const hash = await writeContractAsync(request);
       const receipt = await client!.waitForTransactionReceipt({ hash });
       return { hash, receipt };

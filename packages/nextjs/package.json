@@ -25,6 +25,7 @@
     "@scaffold-ui/components": "^0.1.12",
     "@scaffold-ui/debug-contracts": "^0.1.11",
     "@scaffold-ui/hooks": "^0.1.8",
+    "@stripe/stripe-js": "^10.0.0",
     "@tanstack/react-query": "~5.100.5",
     "blo": "~2.0.0",
     "burner-connector": "0.0.21",

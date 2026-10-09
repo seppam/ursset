@@ -10,4 +10,4 @@ export const sale = { address: a.PrimarySale, abi: abis.PrimarySale } as const;
 export const market = { address: a.Marketplace, abi: abis.Marketplace } as const;
 
 export const DEPLOY_BLOCK = BigInt(deployment.deployBlock);
-export const isDeployed = a.PropertyToken !== "0x0000000000000000000000000000000000000000";
+export const isDeployed = (a.PropertyToken as string) !== "0x0000000000000000000000000000000000000000";
