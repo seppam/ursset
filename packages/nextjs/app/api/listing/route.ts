@@ -1,4 +1,5 @@
 import { put } from "@vercel/blob";
+import { blobToken } from "~~/lib/server/blob";
 import { HttpError, type ListingInput, fail, listProperty, requireOperatorCode } from "~~/lib/server/operator";
 
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
@@ -27,7 +28,7 @@ const isOurBlob = (u: string) => new URL(u).hostname.endsWith(".public.blob.verc
  * Copies a pasted image link into our own storage. Many sites block hotlinking, so a link that works in
  * the owner's browser would show up broken for everyone else; a copy we host always loads.
  */
-async function rehost(source: string): Promise<string> {
+async function rehost(source: string, token: string): Promise<string> {
   if (isOurBlob(source)) return source;
   let res: Response;
   try {
@@ -51,6 +52,7 @@ async function rehost(source: string): Promise<string> {
     access: "public",
     contentType: type,
     addRandomSuffix: true,
+    token,
   });
   return blob.url;
 }
@@ -62,12 +64,13 @@ export async function POST(req: Request) {
     requireOperatorCode(body.passcode);
 
     const unitPrice = int(body.unitPrice ?? 10_000, 1000, 1_000_000, "Harga unit");
-    const hasBlob = Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+    const token = blobToken();
+    const hasBlob = Boolean(token);
     const pasted = (Array.isArray(body.images) ? body.images : [])
       .map(url)
       .filter((u: string | null): u is string => !!u)
       .slice(0, 6);
-    const images = hasBlob ? await Promise.all(pasted.map(rehost)) : pasted;
+    const images = hasBlob ? await Promise.all(pasted.map((u: string) => rehost(u, token!))) : pasted;
 
     const input: ListingInput = {
       name: text(body.name, 48),
@@ -105,6 +108,7 @@ export async function POST(req: Request) {
         access: "public",
         contentType: "application/json",
         addRandomSuffix: true,
+        token,
       });
       metadataURI = blob.url;
     } else {
