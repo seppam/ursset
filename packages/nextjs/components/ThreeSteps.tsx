@@ -76,6 +76,7 @@ export function ThreeSteps({ roomId = 0n }: { roomId?: bigint }) {
   const [done, setDone] = useState<{ hash: string; units: number } | null>(null);
   const [error, setError] = useState("");
 
+  const payBlocked = !me.verified && (!agree || fullName.trim().length < 2);
   const maxUnits = Math.max(1, Math.min(Number(me.idr / price), Number(info.unitsLeft ?? 0n) || 1));
   const chosen = Math.min(units, maxUnits);
   const total = BigInt(chosen) * price;
@@ -89,7 +90,8 @@ export function ThreeSteps({ roomId = 0n }: { roomId?: bigint }) {
       setPhase("working");
       if (!me.verified) await post("/api/kyc", { address: me.address });
       await post("/api/topup", { address: me.address, amount: topup });
-      me.refetch();
+      // Wait for the new balance so the panel moves straight to step 3 instead of flashing the form.
+      await me.refetch();
     } catch (e) {
       setError(t(friendlyError(e)));
     } finally {
@@ -185,6 +187,8 @@ export function ThreeSteps({ roomId = 0n }: { roomId?: bigint }) {
               <input
                 className="mt-2 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm"
                 placeholder={t("Nama sesuai KTP")}
+                aria-label={t("Nama sesuai KTP")}
+                autoComplete="name"
                 value={fullName}
                 onChange={e => setFullName(e.target.value)}
               />
@@ -194,13 +198,10 @@ export function ThreeSteps({ roomId = 0n }: { roomId?: bigint }) {
               </label>
             </div>
           )}
-          <button
-            className="btn-main mt-4"
-            disabled={!me.address || (!me.verified && (!agree || fullName.trim().length < 2))}
-            onClick={pay}
-          >
+          <button className="btn-main mt-4" disabled={!me.address || payBlocked} onClick={pay}>
             {t("Bayar {amount} lewat QRIS", { amount: rp(topup) })}
           </button>
+          {payBlocked && <p className="mt-2 text-center text-xs text-muted">{t("Isi nama dan centang persetujuan")}</p>}
         </div>
       )}
 

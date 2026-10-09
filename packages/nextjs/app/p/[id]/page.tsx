@@ -53,7 +53,7 @@ function Detail() {
   }, []);
 
   return (
-    <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_380px] md:items-start md:gap-6">
+    <div className="grid gap-4 pb-24 md:grid-cols-[minmax(0,1fr)_380px] md:items-start md:gap-6 md:pb-0">
       <div className="space-y-4">
         <div className="card overflow-hidden">
           {meta && meta.images.length > 1 ? (

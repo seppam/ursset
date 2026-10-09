@@ -32,5 +32,9 @@ export function friendlyError(error: unknown): string {
   if (key.includes("NotActive")) return "Penawaran ini sudah tidak aktif.";
   if (key.includes("User rejected") || key.includes("denied")) return "Dibatalkan.";
   if (key.includes("insufficient funds")) return "Gas habis. Muat ulang halaman, lalu coba lagi.";
-  return text.length > 160 ? `${text.slice(0, 160)}…` : text;
+  // Unknown wallet/contract errors (viem) are raw and technical: show a generic translated message instead.
+  // Plain Errors come from our own API (already Indonesian messages), so those pass through.
+  const isViem = typeof (error as { shortMessage?: unknown })?.shortMessage === "string" || Boolean(name);
+  if (isViem || text.length > 160) return "Terjadi kesalahan. Coba lagi sebentar lagi.";
+  return text;
 }

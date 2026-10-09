@@ -8,6 +8,9 @@ import { friendlyError, num, rp } from "~~/lib/format";
 import { useSaleInfo } from "~~/lib/hooks";
 import { PropertyProvider, useMetaMap, useProp, useProperties } from "~~/lib/properties";
 
+// Must equal the server's per-unit rent limit (5% of the Rp10.000 unit price). The server enforces it; this only warns early.
+const MAX_RENT_PER_UNIT = 500;
+
 function RentForm({ passcode, onPasscodeProblem }: { passcode: string; onPasscodeProblem: (msg: string) => void }) {
   const t = useOwnerT();
   const info = useSaleInfo();
@@ -18,6 +21,9 @@ function RentForm({ passcode, onPasscodeProblem }: { passcode: string; onPasscod
   const [result, setResult] = useState<Result | null>(null);
   const circulating = Number(info.circulating ?? 0n);
   const amount = circulating * perUnit;
+  const unitPrice = Number(info.unitPrice ?? 10_000n) || 10_000;
+  const overLimit = perUnit > MAX_RENT_PER_UNIT;
+  const pct = Math.round((perUnit / unitPrice) * 1000) / 10;
   const errors = validateRent({ passcode, perUnit });
   const perUnitError = tried ? errors.perUnit : undefined;
 
@@ -29,7 +35,7 @@ function RentForm({ passcode, onPasscodeProblem }: { passcode: string; onPasscod
       focusField("passcode");
       return;
     }
-    if (errors.perUnit) {
+    if (errors.perUnit || overLimit) {
       focusField("perUnit");
       return;
     }
@@ -82,14 +88,25 @@ function RentForm({ passcode, onPasscodeProblem }: { passcode: string; onPasscod
             onChange={setPerUnit}
           />
         </Field>
+        <p
+          className={`mt-1 text-xs ${overLimit ? "font-semibold text-red-600" : "text-muted"}`}
+          role={overLimit ? "alert" : undefined}
+        >
+          {overLimit
+            ? t("Sewa per unit melebihi batas. Maks. Rp{max} per unit per setoran (5% harga unit).", {
+                max: MAX_RENT_PER_UNIT,
+              })
+            : t("Maks. Rp{max} per unit per setoran", { max: MAX_RENT_PER_UNIT })}
+        </p>
       </div>
 
       <div className="mt-3 rounded-xl bg-brand-soft p-4 text-brand-deep">
-        <p className="text-xs font-semibold">{t("Total yang akan disetor")}</p>
+        <p className="text-xs font-semibold">{t("Total setoran")}</p>
         <p className="num text-3xl font-black">{rp(amount)}</p>
         <p className="num text-xs">
           {t("{units} unit × {price} per unit", { units: num(circulating), price: rp(perUnit) })}
         </p>
+        <p className="num text-xs">{t("{pct}% dari harga unit", { pct: String(pct).replace(".", ",") })}</p>
       </div>
 
       {circulating === 0 && (
@@ -98,7 +115,7 @@ function RentForm({ passcode, onPasscodeProblem }: { passcode: string; onPasscod
         </p>
       )}
 
-      <button className="btn-main mt-4" disabled={busy || circulating === 0} onClick={deposit}>
+      <button className="btn-main mt-4" disabled={busy || circulating === 0 || overLimit} onClick={deposit}>
         {busy ? (
           <>
             <Spinner />

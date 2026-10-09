@@ -20,7 +20,7 @@ export function PropertyHero({ rounded = true }: { rounded?: boolean }) {
         cover ? { backgroundImage: `url(${cover})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined
       }
     >
-      <div className="absolute inset-0 rounded-[inherit] bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
+      <div className="absolute inset-0 rounded-[inherit] bg-gradient-to-t from-black/80 via-black/40 to-black/5" />
       <div className="relative">
         <p className="text-xs font-semibold uppercase tracking-wide opacity-90">{t("Rumah kos · ilustrasi demo")}</p>
         <h2 className="text-2xl font-black drop-shadow">{name}</h2>
