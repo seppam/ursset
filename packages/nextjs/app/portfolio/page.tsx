@@ -16,7 +16,7 @@ import { PropertyProvider, useProperties } from "~~/lib/properties";
 
 export default function Portfolio() {
   const t = useT();
-  const { authenticated, login } = usePrivy();
+  const { ready: privyReady, authenticated, login } = usePrivy();
   const me = useMe();
   const { data: properties, isLoading } = useProperties();
 
@@ -44,7 +44,7 @@ export default function Portfolio() {
         </div>
         <h1 className="text-xl font-extrabold">{t("Portofoliomu")}</h1>
         <p className="mt-1 text-sm text-muted">{t("Masuk untuk melihat unit dan sewa yang masuk.")}</p>
-        <button className="btn-main mt-4" onClick={login}>
+        <button className="btn-main mt-4" disabled={!privyReady} onClick={login}>
           {t("Masuk")}
         </button>
       </div>
@@ -65,6 +65,12 @@ export default function Portfolio() {
   // Start with one card open: the only one, else the first with rent waiting, else the first.
   const defaultId = (owned.find(r => r.pending > 0n) ?? owned[0])?.info.id;
 
+  // Open the matching card (the one with rent waiting, or the first one) and scroll to the list.
+  const openCard = (id?: number) => {
+    if (id !== undefined) setToggled(prev => ({ ...prev, [id]: true }));
+    document.getElementById("properti-kamu")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <div className="space-y-5">
       <section className="rounded-[1.5rem] bg-gradient-to-br from-brand to-brand-deep p-5 text-white shadow-[var(--shadow-raised)]">
@@ -75,19 +81,26 @@ export default function Portfolio() {
           {!me.verified && <span className="chip bg-amber-100 text-amber-900">{t("Belum terverifikasi")}</span>}
         </div>
         <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs font-semibold">
+          <Link
+            href="/"
+            className="flex min-h-[64px] flex-col items-center justify-center gap-1 rounded-2xl bg-white/15 hover:bg-white/25"
+          >
+            <CoinIcon size={20} />
+            {t("Urunan")}
+          </Link>
           {[
-            { href: "/", label: "Urunan", Icon: CoinIcon },
-            { href: "#properti-kamu", label: "Ambil sewa", Icon: ChartIcon },
-            { href: "#properti-kamu", label: "Jual unit", Icon: SwapIcon },
-          ].map(({ href, label, Icon }) => (
-            <Link
+            { label: "Ambil sewa", Icon: ChartIcon, target: (owned.find(r => r.pending > 0n) ?? owned[0])?.info.id },
+            { label: "Jual unit", Icon: SwapIcon, target: owned[0]?.info.id },
+          ].map(({ label, Icon, target }) => (
+            <button
               key={label}
-              href={href}
+              type="button"
+              onClick={() => openCard(target)}
               className="flex min-h-[64px] flex-col items-center justify-center gap-1 rounded-2xl bg-white/15 hover:bg-white/25"
             >
               <Icon size={20} />
               {t(label)}
-            </Link>
+            </button>
           ))}
         </div>
       </section>
@@ -132,7 +145,7 @@ export default function Portfolio() {
           {others.length > 0 && (
             <section className="space-y-3">
               <div className="px-1">
-                <h2 className="text-lg font-extrabold">{t("Properti yang sebaiknya kamu miliki sekarang")}</h2>
+                <h2 className="text-lg font-extrabold">{t("Properti lain")}</h2>
                 <p className="text-sm text-muted">{t("Tambah unit atau mulai dari properti lain, mulai Rp10.000.")}</p>
               </div>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

@@ -56,7 +56,7 @@ const en: Record<string, string> = {
   "Belum ada properti.": "No properties yet.",
   "Ini demo hackathon di jaringan uji dengan data ilustrasi dan Rupiah uji. Bukan penawaran investasi dan tidak ada imbal hasil yang dijanjikan.":
     "This is a hackathon demo on a test network with illustrative data and test Rupiah. It is not an investment offer and no return is promised.",
-  "Mulai urunan": "Start chipping in",
+  "Mulai urunan": "Start pooling",
   "Rumah kos · ilustrasi demo": "Boarding house · demo illustration",
   kamar: "rooms",
   terisi: "occupied",
@@ -206,7 +206,7 @@ const en: Record<string, string> = {
   "Pemilik properti": "Property owners",
   "Setor sewa": "Deposit rent",
   "Properti kamu": "Your properties",
-  "Properti yang sebaiknya kamu miliki sekarang": "Properties you should own now",
+  "Properti lain": "Other properties",
   "Tambah unit atau mulai dari properti lain, mulai Rp10.000.":
     "Add units or start with another property, from Rp10,000.",
   "Kamu belum punya unit di properti mana pun. Mulai dari yang di bawah.":
@@ -246,6 +246,15 @@ const en: Record<string, string> = {
   "Jumlah unit terlalu besar": "Too many units",
   Gagal: "Failed",
   "Dokumen (satu per baris)": "Documents (one per line)",
+  // ux review fixes
+  "Isi nama dan centang persetujuan": "Enter your name and tick the agreement",
+  "Terjadi kesalahan. Coba lagi sebentar lagi.": "Something went wrong. Please try again in a moment.",
+  "Maks. Rp{max} per unit per setoran": "Max. Rp{max} per unit per deposit",
+  "Sewa per unit melebihi batas. Maks. Rp{max} per unit per setoran (5% harga unit).":
+    "Rent per unit is over the limit. Max. Rp{max} per unit per deposit (5% of the unit price).",
+  "Total setoran": "Deposit total",
+  "{pct}% dari harga unit": "{pct}% of the unit price",
+  "Isi saldo dulu sebelum membeli.": "Top up before buying.",
 };
 
 // Area-specific dictionaries live in their own files so several people can add strings without conflicts.
@@ -272,6 +281,10 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       // storage can be blocked in private windows
     }
   }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
 
   const setLang = useCallback((l: Lang) => {
     setLangState(l);

@@ -27,6 +27,10 @@ export function IntInput({
       pattern="[0-9]*"
       className={className}
       value={text}
+      onFocus={e => {
+        e.currentTarget.select();
+        rest.onFocus?.(e);
+      }}
       onChange={e => {
         const digits = e.target.value.replace(/\D/g, "").replace(/^0+(?=\d)/, "");
         setText(digits);
