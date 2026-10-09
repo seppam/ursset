@@ -7,12 +7,21 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 /// onchain; no personal data is ever stored here.
 contract KYCRegistry is Ownable {
     mapping(address => bool) private _verified;
+    /// @notice Trusted contracts (the property factory) that may verify the contracts they create.
+    mapping(address => bool) public registrar;
+
+    error NotAuthorized();
 
     event VerificationSet(address indexed account, bool verified);
 
     constructor(address owner_) Ownable(owner_) { }
 
-    function setVerified(address account, bool verified) external onlyOwner {
+    function setRegistrar(address account, bool allowed) external onlyOwner {
+        registrar[account] = allowed;
+    }
+
+    function setVerified(address account, bool verified) external {
+        if (msg.sender != owner() && !registrar[msg.sender]) revert NotAuthorized();
         _verified[account] = verified;
         emit VerificationSet(account, verified);
     }

@@ -5,15 +5,16 @@ import Link from "next/link";
 import { usePrivy } from "@privy-io/react-auth";
 import { QRCodeSVG } from "qrcode.react";
 import { txUrl } from "~~/lib/chain";
-import { sale } from "~~/lib/contracts";
 import { friendlyError, num, rp } from "~~/lib/format";
-import { useMe, usePost, useSaleInfo, useSend } from "~~/lib/hooks";
-import { property } from "~~/lib/property";
+import { useMe, usePost, usePropMe, useSaleInfo, useSend } from "~~/lib/hooks";
+import { useT } from "~~/lib/i18n";
+import { useProp } from "~~/lib/properties";
 
 const STEPS = ["Masuk", "Isi saldo", "Urunan"];
 const TOPUPS = [100_000, 500_000, 1_000_000];
 
 function Stepper({ step }: { step: number }) {
+  const t = useT();
   return (
     <ol className="mb-4 flex items-center gap-2">
       {STEPS.map((label, i) => {
@@ -29,7 +30,9 @@ function Stepper({ step }: { step: number }) {
             >
               {done ? "✓" : n}
             </span>
-            <span className={`text-xs font-semibold ${active ? "text-ink" : "text-muted"}`}>{label}</span>
+            <span className={`text-xs font-semibold ${active ? "text-ink" : "text-muted"}`}>
+              {t(label === "Urunan" ? "Urunan" : label)}
+            </span>
             {n < 3 && <span className="h-px flex-1 bg-line" />}
           </li>
         );
@@ -40,13 +43,16 @@ function Stepper({ step }: { step: number }) {
 
 /** The whole purchase in three steps: sign in, top up (with a light identity check), chip in. */
 export function ThreeSteps({ roomId = 0n }: { roomId?: bigint }) {
+  const t = useT();
   const { ready, authenticated, login } = usePrivy();
+  const { c, name } = useProp();
   const me = useMe();
+  const propMe = usePropMe();
   const info = useSaleInfo();
   const send = useSend();
   const post = usePost();
 
-  const price = info.unitPrice ?? BigInt(property.unitPrice);
+  const price = info.unitPrice ?? 10_000n;
   const step = !authenticated ? 1 : !me.verified || me.idr < price ? 2 : 3;
 
   // Step 1 follow-up: the server tops up a little gas so the user never sees a fee.
@@ -60,7 +66,7 @@ export function ThreeSteps({ roomId = 0n }: { roomId?: bigint }) {
 
   // Step 2 state
   const [topup, setTopup] = useState(500_000);
-  const [name, setName] = useState("");
+  const [fullName, setFullName] = useState("");
   const [agree, setAgree] = useState(false);
   const [phase, setPhase] = useState<"form" | "qris" | "working">("form");
 
@@ -85,7 +91,7 @@ export function ThreeSteps({ roomId = 0n }: { roomId?: bigint }) {
       await post("/api/topup", { address: me.address, amount: topup });
       me.refetch();
     } catch (e) {
-      setError(friendlyError(e));
+      setError(t(friendlyError(e)));
     } finally {
       setPhase("form");
     }
@@ -95,12 +101,13 @@ export function ThreeSteps({ roomId = 0n }: { roomId?: bigint }) {
     setError("");
     setBusy(true);
     try {
-      const { hash } = await send({ ...sale, functionName: "buy", args: [BigInt(chosen), roomId] });
+      const { hash } = await send({ ...c.sale, functionName: "buy", args: [BigInt(chosen), roomId] });
       setDone({ hash, units: chosen });
       me.refetch();
+      propMe.refetch();
       info.refetch();
     } catch (e) {
-      setError(friendlyError(e));
+      setError(t(friendlyError(e)));
     } finally {
       setBusy(false);
     }
@@ -112,9 +119,9 @@ export function ThreeSteps({ roomId = 0n }: { roomId?: bigint }) {
         <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-soft text-2xl">
           🎉
         </div>
-        <h3 className="text-xl font-extrabold">Kamu punya {num(done.units)} unit!</h3>
+        <h3 className="text-xl font-extrabold">{t("Kamu punya {n} unit!", { n: num(done.units) })}</h3>
         <p className="mt-1 text-sm text-muted">
-          Bagian {property.name} senilai {rp(BigInt(done.units) * price)} sekarang atas namamu.
+          {t("Bagian {name} senilai {amount} sekarang atas namamu.", { name, amount: rp(BigInt(done.units) * price) })}
         </p>
         <a
           className="mt-3 inline-block text-xs font-semibold text-brand underline"
@@ -122,14 +129,14 @@ export function ThreeSteps({ roomId = 0n }: { roomId?: bigint }) {
           target="_blank"
           rel="noreferrer"
         >
-          Lihat bukti di blockchain
+          {t("Lihat bukti di blockchain")}
         </a>
         <div className="mt-4 grid gap-2">
           <Link href="/portfolio" className="btn-main">
-            Lihat portofolio
+            {t("Lihat portofolio")}
           </Link>
           <button className="btn-ghost justify-center" onClick={() => setDone(null)}>
-            Urunan lagi
+            {t("Urunan lagi")}
           </button>
         </div>
       </div>
@@ -142,21 +149,21 @@ export function ThreeSteps({ roomId = 0n }: { roomId?: bigint }) {
 
       {step === 1 && (
         <div>
-          <h3 className="text-lg font-extrabold">Masuk dengan email atau Google</h3>
+          <h3 className="text-lg font-extrabold">{t("Masuk dengan email atau Google")}</h3>
           <p className="mt-1 text-sm text-muted">
-            Tanpa aplikasi tambahan dan tanpa kata sandi baru. Sekitar 10 detik.
+            {t("Tanpa aplikasi tambahan dan tanpa kata sandi baru. Sekitar 10 detik.")}
           </p>
           <button className="btn-main mt-4" disabled={!ready} onClick={login}>
-            Masuk untuk mulai
+            {t("Masuk untuk mulai")}
           </button>
         </div>
       )}
 
       {step === 2 && phase === "form" && (
         <div>
-          <h3 className="text-lg font-extrabold">Isi saldo Rupiah</h3>
+          <h3 className="text-lg font-extrabold">{t("Isi saldo Rupiah")}</h3>
           <p className="mt-1 text-sm text-muted">
-            Pembayaran QRIS disimulasikan. Saldo di demo adalah Rupiah uji (tIDR).
+            {t("Pembayaran QRIS disimulasikan. Saldo di demo adalah Rupiah uji (tIDR).")}
           </p>
           <div className="mt-3 grid grid-cols-3 gap-2">
             {TOPUPS.map(v => (
@@ -171,28 +178,28 @@ export function ThreeSteps({ roomId = 0n }: { roomId?: bigint }) {
           </div>
           {!me.verified && (
             <div className="mt-4 rounded-xl bg-slate-50 p-3">
-              <p className="text-sm font-bold">Verifikasi cepat</p>
+              <p className="text-sm font-bold">{t("Verifikasi cepat")}</p>
               <p className="text-xs text-muted">
-                Wajib sebelum membeli. Demo: data ini tidak disimpan dan tidak masuk blockchain.
+                {t("Wajib sebelum membeli. Demo: data ini tidak disimpan dan tidak masuk blockchain.")}
               </p>
               <input
                 className="mt-2 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm"
-                placeholder="Nama sesuai KTP"
-                value={name}
-                onChange={e => setName(e.target.value)}
+                placeholder={t("Nama sesuai KTP")}
+                value={fullName}
+                onChange={e => setFullName(e.target.value)}
               />
               <label className="mt-2 flex items-start gap-2 text-xs text-muted">
                 <input type="checkbox" className="mt-0.5" checked={agree} onChange={e => setAgree(e.target.checked)} />
-                Saya paham ini demo di jaringan uji dan bukan penawaran investasi.
+                {t("Saya paham ini demo di jaringan uji dan bukan penawaran investasi.")}
               </label>
             </div>
           )}
           <button
             className="btn-main mt-4"
-            disabled={!me.address || (!me.verified && (!agree || name.trim().length < 2))}
+            disabled={!me.address || (!me.verified && (!agree || fullName.trim().length < 2))}
             onClick={pay}
           >
-            Bayar {rp(topup)} lewat QRIS
+            {t("Bayar {amount} lewat QRIS", { amount: rp(topup) })}
           </button>
         </div>
       )}
@@ -204,19 +211,19 @@ export function ThreeSteps({ roomId = 0n }: { roomId?: bigint }) {
               <div className="mx-auto w-fit rounded-xl border border-line bg-white p-3">
                 <QRCodeSVG value={`URSSET-DEMO-QRIS-${topup}`} size={150} />
               </div>
-              <p className="mt-3 font-bold">Menunggu pembayaran (simulasi)…</p>
+              <p className="mt-3 font-bold">{t("Menunggu pembayaran (simulasi)…")}</p>
             </>
           ) : (
-            <p className="py-10 font-bold">Memverifikasi dan mengisi saldo…</p>
+            <p className="py-10 font-bold">{t("Memverifikasi dan mengisi saldo…")}</p>
           )}
         </div>
       )}
 
       {step === 3 && (
         <div>
-          <h3 className="text-lg font-extrabold">Pilih nominal urunan</h3>
+          <h3 className="text-lg font-extrabold">{t("Pilih nominal urunan")}</h3>
           <p className="text-sm text-muted">
-            1 unit = {rp(price)}. Saldo kamu {rp(me.idr)}.
+            {t("1 unit = {price}. Saldo kamu {balance}.", { price: rp(price), balance: rp(me.idr) })}
           </p>
           <div className="mt-3 grid grid-cols-3 gap-2">
             {[1, 5, 10].map(u => (
@@ -237,28 +244,28 @@ export function ThreeSteps({ roomId = 0n }: { roomId?: bigint }) {
             value={chosen}
             onChange={e => setUnits(Number(e.target.value))}
             className="mt-4 w-full"
-            aria-label="Jumlah unit"
+            aria-label={t("Jumlah unit")}
           />
           <dl className="mt-2 space-y-1 rounded-xl bg-slate-50 p-3 text-sm">
             <div className="flex justify-between">
-              <dt className="text-muted">Jumlah unit</dt>
+              <dt className="text-muted">{t("Jumlah unit")}</dt>
               <dd className="font-semibold">{num(chosen)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-muted">Harga per unit</dt>
+              <dt className="text-muted">{t("Harga per unit")}</dt>
               <dd className="font-semibold">{rp(price)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-muted">Biaya untuk kamu</dt>
+              <dt className="text-muted">{t("Biaya untuk kamu")}</dt>
               <dd className="font-semibold">Rp0</dd>
             </div>
             <div className="flex justify-between border-t border-line pt-1">
-              <dt className="font-bold">Total</dt>
+              <dt className="font-bold">{t("Total")}</dt>
               <dd className="font-extrabold">{rp(total)}</dd>
             </div>
           </dl>
           <button className="btn-main mt-4" disabled={busy || me.idr < total} onClick={buy}>
-            {busy ? "Memproses…" : `Urunan ${rp(total)}`}
+            {busy ? t("Memproses…") : t("Urunan {amount}", { amount: rp(total) })}
           </button>
         </div>
       )}

@@ -1,0 +1,17 @@
+{
+  "name": "Kos Dago Asri Bandung",
+  "city": "Bandung, Jawa Barat",
+  "rooms": 14,
+  "occupancy": 90,
+  "totalValue": 2000000000,
+  "about": "Kos tiga lantai di kawasan Dago, dekat kampus dan pusat kuliner. Dana urunan dipakai untuk renovasi kamar mandi dan penambahan dapur bersama. Data di halaman ini adalah ilustrasi untuk demo hackathon.",
+  "images": [
+    "/properties/dago-1.svg",
+    "/properties/dago-2.svg"
+  ],
+  "documents": [
+    "Sertifikat (SHGB atas nama SPV)",
+    "Izin bangunan",
+    "Laporan keuangan 12 bulan terakhir"
+  ]
+}

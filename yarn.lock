@@ -4602,6 +4602,7 @@ __metadata:
     "@trivago/prettier-plugin-sort-imports": "npm:~6.0.2"
     "@types/node": "npm:~18.19.130"
     "@types/react": "npm:~19.2.14"
+    "@vercel/blob": "npm:^2.8.0"
     abitype: "npm:1.2.4"
     bgipfs: "npm:~0.0.18"
     blo: "npm:~2.0.0"
@@ -6406,6 +6407,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vercel/blob@npm:^2.8.0":
+  version: 2.8.0
+  resolution: "@vercel/blob@npm:2.8.0"
+  dependencies:
+    "@vercel/oidc": "npm:^3.6.1"
+    async-retry: "npm:^1.3.3"
+    is-buffer: "npm:^2.0.5"
+    is-node-process: "npm:^1.2.0"
+    throttleit: "npm:^2.1.0"
+    undici: "npm:^6.23.0"
+  checksum: 10/c3cb47a6caad4c5aa215d511894b93911c7a6ac401b2e4660acffb27f3eed76cc45429d6334d45b272b3c8ff67a730f7b3a5cf9663c132800022ab8b7f29736b
+  languageName: node
+  linkType: hard
+
 "@vercel/build-utils@npm:13.20.0":
   version: 13.20.0
   resolution: "@vercel/build-utils@npm:13.20.0"
@@ -6427,6 +6442,25 @@ __metadata:
   bin:
     cervel: bin/cervel.mjs
   checksum: 10/bda2277981c78712ad6d180fb2842af46a19359a878cc80b50807904ef69d7930c38ff9543313c948849e1cfbb5aebbcc5de1966111b0788673b8c5390b7423d
+  languageName: node
+  linkType: hard
+
+"@vercel/cli-config@npm:0.3.0":
+  version: 0.3.0
+  resolution: "@vercel/cli-config@npm:0.3.0"
+  dependencies:
+    xdg-app-paths: "npm:5"
+    zod: "npm:4.1.11"
+  checksum: 10/02fdb78f3924c8ed916d5610541e4322d1605026f9a785abe5973c1619688b21dda7e01dfec9cf90d67f70a9d67f8eb4d61c7667ae0e40870c162bca7e7f30cf
+  languageName: node
+  linkType: hard
+
+"@vercel/cli-exec@npm:1.0.1":
+  version: 1.0.1
+  resolution: "@vercel/cli-exec@npm:1.0.1"
+  dependencies:
+    execa: "npm:5.1.1"
+  checksum: 10/9d4a82bacb2562e82e390690487742d1fd265f7b09fb02e6276389736b0962c266efd84993e668f18bdbf57ae9bb5b46733189fa22013a5c3cce925b2b096989
   languageName: node
   linkType: hard
 
@@ -6655,6 +6689,17 @@ __metadata:
   version: 3.2.0
   resolution: "@vercel/oidc@npm:3.2.0"
   checksum: 10/2a64ee806217d8e1cff79cc9d2925d6381883d24fa7b76ef07c9c1178534b624dc8da4d00d39f42e2a3be8c0ef35ab12bec2164dd978913db639c442fb93ccae
+  languageName: node
+  linkType: hard
+
+"@vercel/oidc@npm:^3.6.1":
+  version: 3.8.9
+  resolution: "@vercel/oidc@npm:3.8.9"
+  dependencies:
+    "@vercel/cli-config": "npm:0.3.0"
+    "@vercel/cli-exec": "npm:1.0.1"
+    jose: "npm:^5.9.6"
+  checksum: 10/67874b76d2c132687449b14e71110d2fcebe4335cec40bbfdea597dc30c7da26ef1167f4e22db2a5165dbc7e0872391e285cb2a5a1c8f3448350d3cecfef5d0b
   languageName: node
   linkType: hard
 
@@ -10491,7 +10536,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"execa@npm:5":
+"execa@npm:5, execa@npm:5.1.1":
   version: 5.1.1
   resolution: "execa@npm:5.1.1"
   dependencies:
@@ -12382,6 +12427,13 @@ __metadata:
   version: 4.15.9
   resolution: "jose@npm:4.15.9"
   checksum: 10/256234b6f85cdc080b1331f2d475bd58c8ccf459cb20f70ac5e4200b271bce10002b1c2f8e5b96dd975d83065ae5a586d52cdf89d28471d56de5d297992f9905
+  languageName: node
+  linkType: hard
+
+"jose@npm:^5.9.6":
+  version: 5.10.0
+  resolution: "jose@npm:5.10.0"
+  checksum: 10/03881d1dfb390dcf50926402edcfe233bf557b5a77321fcb1bdb53453bc1cdd26d2d0a9ab28c7445cbb826881f84fdf5074179700f10c2711ccb9880f51065d7
   languageName: node
   linkType: hard
 
@@ -18847,6 +18899,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"xdg-app-paths@npm:5":
+  version: 5.5.1
+  resolution: "xdg-app-paths@npm:5.5.1"
+  dependencies:
+    os-paths: "npm:^4.0.1"
+    xdg-portable: "npm:^7.2.0"
+  checksum: 10/3bc247fa62cf4a2d6eb75faf23f0ae46374f3ff87a208db7eb3b1f276d57e72d3302cdfb0871e3fa8aa9a24fca972dde49b4137052b23f2949fce3bab04f8859
+  languageName: node
+  linkType: hard
+
 "xdg-app-paths@npm:5.1.0":
   version: 5.1.0
   resolution: "xdg-app-paths@npm:5.1.0"
@@ -18856,7 +18918,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xdg-portable@npm:^7.0.0":
+"xdg-portable@npm:^7.0.0, xdg-portable@npm:^7.2.0":
   version: 7.3.0
   resolution: "xdg-portable@npm:7.3.0"
   dependencies:
@@ -19011,6 +19073,13 @@ __metadata:
   version: 3.24.4
   resolution: "zod@npm:3.24.4"
   checksum: 10/3d545792fa54bb27ee5dbc34a5709e81f603185fcc94c8204b5d95c20dc4c81d870ff9c51f3884a30ef05cdc601449f4c4df254ac4783f0827b1faed7c1cdb48
+  languageName: node
+  linkType: hard
+
+"zod@npm:4.1.11":
+  version: 4.1.11
+  resolution: "zod@npm:4.1.11"
+  checksum: 10/5a0f5697dbe86bf40934916d888cfe0ec6f1f767eb0b6f944ffd5573397c8a56ef7d2ebd0f889bfb44ceaf93edcddf021994633747a9a6b0dcbeb57bd0a67442
   languageName: node
   linkType: hard
 

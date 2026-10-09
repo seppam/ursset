@@ -5,6 +5,7 @@ import { PrivyProvider } from "@privy-io/react-auth";
 import { WagmiProvider } from "@privy-io/wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { robinhoodTestnet } from "~~/lib/chain";
+import { I18nProvider } from "~~/lib/i18n";
 import { wagmiConfig } from "~~/lib/wagmi";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -23,7 +24,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       }}
     >
       <QueryClientProvider client={queryClient}>
-        <WagmiProvider config={wagmiConfig}>{children}</WagmiProvider>
+        <WagmiProvider config={wagmiConfig}>
+          <I18nProvider>{children}</I18nProvider>
+        </WagmiProvider>
       </QueryClientProvider>
     </PrivyProvider>
   );

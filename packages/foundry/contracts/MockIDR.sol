@@ -10,6 +10,9 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 /// in a single transaction. This shortcut exists only because this is a test token.
 contract MockIDR is ERC20, Ownable {
     mapping(address => bool) public trustedSpender;
+    mapping(address => bool) public registrar;
+
+    error NotAuthorized();
 
     constructor(address owner_) ERC20("Test Rupiah", "tIDR") Ownable(owner_) { }
 
@@ -21,7 +24,12 @@ contract MockIDR is ERC20, Ownable {
         _mint(to, amount);
     }
 
-    function setTrustedSpender(address spender, bool trusted) external onlyOwner {
+    function setRegistrar(address account, bool allowed) external onlyOwner {
+        registrar[account] = allowed;
+    }
+
+    function setTrustedSpender(address spender, bool trusted) external {
+        if (msg.sender != owner() && !registrar[msg.sender]) revert NotAuthorized();
         trustedSpender[spender] = trusted;
     }
 

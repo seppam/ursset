@@ -6,7 +6,10 @@ import { fileURLToPath } from "url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const chainId = process.argv[2] || "46630";
-const names = ["KYCRegistry", "MockIDR", "PropertyToken", "RentDistributor", "PrimarySale", "Marketplace"];
+const names = ["KYCRegistry", "MockIDR", "PropertyFactory", "PropertyToken", "RentDistributor", "PrimarySale", "Marketplace"];
+// Only these are deployed once. Each listed property gets its own token, sale, distributor and marketplace
+// from the factory, and the frontend reads those addresses from the factory at runtime.
+const singletons = ["KYCRegistry", "MockIDR", "PropertyFactory"];
 
 const abis = {};
 for (const n of names) {
@@ -14,13 +17,13 @@ for (const n of names) {
 }
 
 const zero = "0x0000000000000000000000000000000000000000";
-const addresses = Object.fromEntries(names.map(n => [n, zero]));
+const addresses = Object.fromEntries(singletons.map(n => [n, zero]));
 let deployBlock = 0;
 const runFile = join(root, "broadcast", "Deploy.s.sol", chainId, "run-latest.json");
 if (existsSync(runFile)) {
   const run = JSON.parse(readFileSync(runFile, "utf8"));
   for (const tx of run.transactions) {
-    if (tx.transactionType === "CREATE" && names.includes(tx.contractName)) addresses[tx.contractName] = tx.contractAddress;
+    if (tx.transactionType === "CREATE" && singletons.includes(tx.contractName)) addresses[tx.contractName] = tx.contractAddress;
   }
   const first = run.receipts?.[0]?.blockNumber;
   if (first) deployBlock = Number(BigInt(first));

@@ -1,17 +1,14 @@
 "use client";
 
 import { useCallback } from "react";
-import { DEPLOY_BLOCK, distributor, idr, isDeployed, kyc, market, sale, token } from "./contracts";
+import { DEPLOY_BLOCK, idr, isDeployed, kyc, tokenErrors } from "./contracts";
 import { abis } from "./generated/ursset";
+import { useProp, useProperties } from "./properties";
 import { usePrivy } from "@privy-io/react-auth";
 import { useQuery } from "@tanstack/react-query";
-import { parseEventLogs } from "viem";
 import { useAccount, useBalance, usePublicClient, useReadContracts, useWriteContract } from "wagmi";
 
-// Contracts bubble up errors raised by the token (for example NotVerified), so simulation needs those definitions too.
-const tokenErrors = abis.PropertyToken.filter(item => item.type === "error");
-
-/** Everything the signed-in investor needs on screen, refreshed every few seconds. */
+/** What the signed-in investor has across the whole app: test Rupiah, verification and gas. */
 export function useMe() {
   const { address } = useAccount();
   const enabled = !!address && isDeployed;
@@ -19,9 +16,7 @@ export function useMe() {
     allowFailure: false,
     contracts: [
       { ...idr, functionName: "balanceOf", args: [address!] },
-      { ...token, functionName: "balanceOf", args: [address!] },
       { ...kyc, functionName: "isVerified", args: [address!] },
-      { ...distributor, functionName: "pending", args: [address!] },
     ],
     query: { enabled, refetchInterval: 4000 },
   });
@@ -31,9 +26,7 @@ export function useMe() {
     address,
     loading: isLoading,
     idr: data?.[0] ?? 0n,
-    units: data?.[1] ?? 0n,
-    verified: data?.[2] ?? false,
-    pendingRent: data?.[3] ?? 0n,
+    verified: data?.[1] ?? false,
     eth: eth.data?.value ?? 0n,
     refetch: () => {
       void refetch();
@@ -42,19 +35,35 @@ export function useMe() {
   };
 }
 
-/** Property level numbers: unsold units, price, rooms and total rent paid out. */
-export function useSaleInfo() {
+/** The investor's units and pending rent in the current property. */
+export function usePropMe() {
+  const { address } = useAccount();
+  const { c } = useProp();
   const { data, refetch } = useReadContracts({
     allowFailure: false,
     contracts: [
-      { ...sale, functionName: "unitsLeft" },
-      { ...sale, functionName: "unitPrice" },
-      { ...sale, functionName: "roomCount" },
-      { ...distributor, functionName: "totalDeposited" },
-      { ...distributor, functionName: "circulating" },
-      { ...token, functionName: "totalUnits" },
+      { ...c.token, functionName: "balanceOf", args: [address!] },
+      { ...c.distributor, functionName: "pending", args: [address!] },
     ],
-    query: { enabled: isDeployed, refetchInterval: 5000 },
+    query: { enabled: !!address, refetchInterval: 4000 },
+  });
+  return { units: data?.[0] ?? 0n, pendingRent: data?.[1] ?? 0n, refetch };
+}
+
+/** Numbers for the current property: unsold units, price, rooms and total rent paid out. */
+export function useSaleInfo() {
+  const { c } = useProp();
+  const { data, refetch } = useReadContracts({
+    allowFailure: false,
+    contracts: [
+      { ...c.sale, functionName: "unitsLeft" },
+      { ...c.sale, functionName: "unitPrice" },
+      { ...c.sale, functionName: "roomCount" },
+      { ...c.distributor, functionName: "totalDeposited" },
+      { ...c.distributor, functionName: "circulating" },
+      { ...c.token, functionName: "totalUnits" },
+    ],
+    query: { refetchInterval: 5000 },
   });
   return {
     unitsLeft: data?.[0],
@@ -105,6 +114,7 @@ export function usePost() {
 
 export type Activity = {
   kind: "buy" | "rent";
+  propertyId: number;
   who?: string;
   units?: bigint;
   amount: bigint;
@@ -113,43 +123,59 @@ export type Activity = {
   block: bigint;
 };
 
-/** Recent purchases and rent deposits, read straight from contract events. */
+/** Recent purchases and rent deposits across all properties, read straight from contract events. */
 export function useActivity(limit = 8) {
   const client = usePublicClient();
+  const { data: properties } = useProperties();
+  const key = properties?.map(p => p.sale).join(",") ?? "";
   return useQuery({
-    queryKey: ["activity", limit],
-    enabled: isDeployed && !!client,
+    queryKey: ["activity", limit, key],
+    enabled: isDeployed && !!client && !!properties?.length,
     refetchInterval: 8000,
     queryFn: async (): Promise<Activity[]> => {
-      const [buys, rents] = await Promise.all([
-        client!.getContractEvents({ ...sale, eventName: "UnitsBought", fromBlock: DEPLOY_BLOCK, strict: true }),
-        client!.getContractEvents({
-          ...distributor,
-          eventName: "RentDeposited",
-          fromBlock: DEPLOY_BLOCK,
-          strict: true,
+      const perProperty = await Promise.all(
+        properties!.map(async p => {
+          const [buys, rents] = await Promise.all([
+            client!.getContractEvents({
+              address: p.sale,
+              abi: abis.PrimarySale,
+              eventName: "UnitsBought",
+              fromBlock: DEPLOY_BLOCK,
+              strict: true,
+            }),
+            client!.getContractEvents({
+              address: p.distributor,
+              abi: abis.RentDistributor,
+              eventName: "RentDeposited",
+              fromBlock: DEPLOY_BLOCK,
+              strict: true,
+            }),
+          ]);
+          return [
+            ...buys.map(e => ({
+              kind: "buy" as const,
+              propertyId: p.id,
+              who: e.args.buyer,
+              units: e.args.units,
+              amount: e.args.cost,
+              roomId: e.args.roomId,
+              hash: e.transactionHash,
+              block: e.blockNumber,
+            })),
+            ...rents.map(e => ({
+              kind: "rent" as const,
+              propertyId: p.id,
+              amount: e.args.amount,
+              hash: e.transactionHash,
+              block: e.blockNumber,
+            })),
+          ] satisfies Activity[];
         }),
-      ]);
-      const rows: Activity[] = [
-        ...buys.map(e => ({
-          kind: "buy" as const,
-          who: e.args.buyer,
-          units: e.args.units,
-          amount: e.args.cost,
-          roomId: e.args.roomId,
-          hash: e.transactionHash,
-          block: e.blockNumber,
-        })),
-        ...rents.map(e => ({
-          kind: "rent" as const,
-          amount: e.args.amount,
-          hash: e.transactionHash,
-          block: e.blockNumber,
-        })),
-      ];
-      return rows.sort((a, b) => Number(b.block - a.block)).slice(0, limit);
+      );
+      return perProperty
+        .flat()
+        .sort((a, b) => Number(b.block - a.block))
+        .slice(0, limit);
     },
   });
 }
-
-export { parseEventLogs, market };

@@ -27,6 +27,7 @@
     "@scaffold-ui/hooks": "^0.1.8",
     "@stripe/stripe-js": "^10.0.0",
     "@tanstack/react-query": "~5.100.5",
+    "@vercel/blob": "^2.8.0",
     "blo": "~2.0.0",
     "burner-connector": "0.0.21",
     "daisyui": "5.5.19",

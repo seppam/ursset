@@ -1,8 +1,19 @@
 import { robinhoodTestnet } from "../chain";
-import { distributor, idr, kyc } from "../contracts";
+import { factory, idr, kyc } from "../contracts";
+import { abis } from "../generated/ursset";
 import { PrivyClient } from "@privy-io/server-auth";
 import "server-only";
-import { createPublicClient, createWalletClient, getAddress, http, isAddress, parseEther } from "viem";
+import {
+  createPublicClient,
+  createWalletClient,
+  getAddress,
+  http,
+  isAddress,
+  keccak256,
+  parseEther,
+  parseEventLogs,
+  toBytes,
+} from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 
 const SERVER_RPC = process.env.SERVER_RPC_URL || "https://rpc.testnet.chain.robinhood.com";
@@ -47,8 +58,8 @@ async function mined(send: () => Promise<`0x${string}`>) {
     for (let attempt = 1; ; attempt++) {
       try {
         const hash = await send();
-        await publicClient.waitForTransactionReceipt({ hash });
-        return hash;
+        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+        return { hash, receipt };
       } catch (e) {
         if (attempt >= 4 || !isNonceClash(e)) throw e;
         await new Promise(r => setTimeout(r, 400 * attempt));
@@ -80,26 +91,100 @@ export async function requireOwner(req: Request, address: unknown): Promise<`0x$
   return getAddress(address);
 }
 
+/** The operator code protects the owner-only actions (deposit rent, list a property, upload photos). */
+export function requireOperatorCode(code: unknown) {
+  const expected = process.env.OPERATOR_PASSCODE;
+  if (!expected || code !== expected) throw new HttpError(401, "Kode operator salah");
+}
+
 export async function dripGas(to: `0x${string}`) {
   const balance = await publicClient.getBalance({ address: to });
   if (balance >= MIN_GAS) return null;
-  return mined(() => walletClient().sendTransaction({ to, value: GAS_DRIP }));
+  return (await mined(() => walletClient().sendTransaction({ to, value: GAS_DRIP }))).hash;
 }
 
 export async function verifyWallet(to: `0x${string}`) {
   const already = await publicClient.readContract({ ...kyc, functionName: "isVerified", args: [to] });
   if (already) return null;
-  return mined(() => walletClient().writeContract({ ...kyc, functionName: "setVerified", args: [to, true] }));
+  return (await mined(() => walletClient().writeContract({ ...kyc, functionName: "setVerified", args: [to, true] })))
+    .hash;
 }
 
 export async function mintRupiah(to: `0x${string}`, amount: bigint) {
   const balance = await publicClient.readContract({ ...idr, functionName: "balanceOf", args: [to] });
   if (balance + amount > MAX_BALANCE) throw new HttpError(400, "Batas saldo demo tercapai");
-  return mined(() => walletClient().writeContract({ ...idr, functionName: "mint", args: [to, amount] }));
+  return (await mined(() => walletClient().writeContract({ ...idr, functionName: "mint", args: [to, amount] }))).hash;
 }
 
-export async function depositRent(amount: bigint) {
-  return mined(() => walletClient().writeContract({ ...distributor, functionName: "depositRent", args: [amount] }));
+/** Looks up a listed property in the factory so callers cannot point the operator at arbitrary contracts. */
+export async function getProperty(id: number) {
+  if (!Number.isInteger(id) || id < 0) throw new HttpError(400, "Properti tidak valid");
+  const count = await publicClient.readContract({ ...factory, functionName: "propertyCount" });
+  if (BigInt(id) >= count) throw new HttpError(404, "Properti tidak ditemukan");
+  const [token, sale, distributor] = await publicClient.readContract({
+    ...factory,
+    functionName: "properties",
+    args: [BigInt(id)],
+  });
+  return { token, sale, distributor };
+}
+
+export async function depositRent(propertyId: number, amount: bigint) {
+  const { distributor } = await getProperty(propertyId);
+  return (
+    await mined(() =>
+      walletClient().writeContract({
+        address: distributor,
+        abi: abis.RentDistributor,
+        functionName: "depositRent",
+        args: [amount],
+      }),
+    )
+  ).hash;
+}
+
+export type ListingInput = {
+  name: string;
+  city: string;
+  rooms: number;
+  occupancy: number;
+  totalValue: number;
+  about: string;
+  images: string[];
+  documents: string[];
+  unitPrice: number;
+};
+
+const symbolOf = (name: string) =>
+  name
+    .replace(/^kos\s+/i, "")
+    .replace(/[^a-z0-9]/gi, "")
+    .slice(0, 6)
+    .toUpperCase() || "KOS";
+
+/** Lists a property: stores its metadata and deploys the whole contract set through the factory. */
+export async function listProperty(input: ListingInput, metadataURI: string, metadataJson: string) {
+  const totalUnits = BigInt(Math.floor(input.totalValue / input.unitPrice));
+  const { hash, receipt } = await mined(() =>
+    walletClient().writeContract({
+      ...factory,
+      functionName: "createProperty",
+      args: [
+        {
+          name: input.name,
+          symbol: symbolOf(input.name),
+          location: input.city,
+          totalUnits,
+          unitPrice: BigInt(input.unitPrice),
+          documentHash: keccak256(toBytes(metadataJson)),
+          metadataURI,
+          treasury: "0x0000000000000000000000000000000000000000",
+        },
+      ],
+    }),
+  );
+  const [event] = parseEventLogs({ abi: abis.PropertyFactory, eventName: "PropertyCreated", logs: receipt.logs });
+  return { hash, propertyId: Number(event.args.id), totalUnits };
 }
 
 export function fail(e: unknown) {
