@@ -47,7 +47,7 @@ GORO (OJK Regulatory Sandbox graduate, Nov 2025) proves demand for fractional pr
 - Contracts: Solidity, Foundry, OpenZeppelin 5.x. Seven contracts: `KYCRegistry`, `PropertyToken`, `RentDistributor`, `PrimarySale` (with rooms), `Marketplace`, `PropertyFactory`, `MockIDR`.
 - Chain: Robinhood Chain Testnet (Ethereum L2 for tokenized assets), chain ID 46630.
 - Frontend: Next.js, React, wagmi, viem, TanStack Query, Tailwind CSS; Privy for email/Google login and embedded wallets; Vercel (hosting and Blob for photos).
-- Tests: 26 Foundry tests plus an end-to-end script (`packages/nextjs/scripts/e2e.mjs`) that runs onboarding, Urunan Room, rent, resale and KYC rejection on the testnet.
+- Tests: 45 Foundry tests (including invariant and fuzz tests) plus an end-to-end script (`packages/nextjs/scripts/e2e.mjs`) that runs onboarding, Urunan Room, rent, resale and KYC rejection on the testnet.
 - Scaffold: Scaffold-ETH 2.
 
 ## Built during the hackathon vs reused

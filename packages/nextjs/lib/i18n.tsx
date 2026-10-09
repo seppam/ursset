@@ -261,8 +261,13 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("ursset-lang");
-      if (saved === "en" || saved === "id") setLangState(saved);
+      // ?lang=en (or id) wins, so a shared link opens in the right language; otherwise use the saved choice.
+      const fromUrl = new URLSearchParams(window.location.search).get("lang");
+      const saved = fromUrl === "en" || fromUrl === "id" ? fromUrl : localStorage.getItem("ursset-lang");
+      if (saved === "en" || saved === "id") {
+        setLangState(saved);
+        document.documentElement.lang = saved;
+      }
     } catch {
       // storage can be blocked in private windows
     }

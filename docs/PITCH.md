@@ -226,14 +226,14 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 **Title:** What exists, and what we need
 
 **On slide**
-- Built: 7 contracts, 26 passing Foundry tests, an end-to-end script on the testnet, a live app in two languages.
+- Built: 7 contracts, 45 passing Foundry tests (including invariant and fuzz tests), an end-to-end script on the testnet, a live app in two languages.
 - Market traction: TODO waitlist (count), TODO interviews (count), TODO pilot owner (status).
 - Next: pilot with one real boarding house, OJK sandbox application, licensed payment partner, secondary-market fees, more properties.
 - Ask: regulatory mentors and boarding-house owners.
 
 **Visual:** three-point timeline (now, pilot, sandbox), TODO traction box, QR code to ursset.vercel.app.
 
-**Speaker notes (30 s):** "What exists is a product: seven contracts, 26 passing tests, and a live app you can try now. Market traction: [TODO real numbers, or say plainly that there are none yet]. Next: a pilot with one real boarding house, the sandbox application, and a licensed payment partner. I am looking for regulatory mentors and boarding-house owners. Thank you."
+**Speaker notes (30 s):** "What exists is a product: seven contracts, 45 passing tests, and a live app you can try now. Market traction: [TODO real numbers, or say plainly that there are none yet]. Next: a pilot with one real boarding house, the sandbox application, and a licensed payment partner. I am looking for regulatory mentors and boarding-house owners. Thank you."
 
 ### Backup slide: Architecture
 

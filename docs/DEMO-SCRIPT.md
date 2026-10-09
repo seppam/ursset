@@ -20,7 +20,7 @@ Record the deck from `docs/PITCH.md` (English version) with voice-over. Narratio
 | 4 | 1:20-1:50 | "Ownership, rent payouts and trades between investors happen on a public ledger the operator does not control, so investors can verify for themselves without trusting a database, while KYC rules are enforced directly by the smart contract. A transfer to an unverified wallet is rejected by the contract itself." |
 | 5 | 1:50-2:05 | "The property owner pays a listing fee, about 3 percent of funds raised. That is an assumption we still need to validate with owners. Investors pay no platform fee." |
 | 6 | 2:05-2:30 | "We do not claim to be compliant. The limit: tokens representing rights to property rent may be treated as financial products supervised by OJK, and payments in Indonesia must be in Rupiah. The path: the OJK Regulatory Sandbox, with the property held by a legal-entity SPV and Rupiah through a BI-licensed payment provider. For the hackathon: testnet, non-custodial, illustrative property data, no real user funds." |
-| 7 | 2:30-3:00 | "What exists is a product: seven contracts, 26 passing tests, and a live app. Market traction: [TODO: real numbers, or state that there are none yet]. Next: a pilot with one real boarding house, the sandbox application, and a licensed payment partner. Try it at ursset.vercel.app. Thank you." |
+| 7 | 2:30-3:00 | "What exists is a product: seven contracts, 45 passing tests, and a live app. Market traction: [TODO: real numbers, or state that there are none yet]. Next: a pilot with one real boarding house, the sandbox application, and a licensed payment partner. Try it at ursset.vercel.app. Thank you." |
 
 Captions: one line per slide using the slide title. Show the URL on slide 7.
 
