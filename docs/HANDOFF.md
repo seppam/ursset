@@ -58,3 +58,11 @@ URSSET ("urunan asset" / "your asset") adalah submission **Ethereum Jakarta Hack
 - Chrome headless untuk tangkapan layar: `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=1 --window-size=500,H --virtual-time-budget=15000 --screenshot=x.png URL` (lebar minimum efektif 500). Panel browser bawaan sering tidak tampil.
 - Setelah `export PATH=...` yang salah, shell bisa kehilangan `awk`, `ls`, dll. Awali perintah dengan `export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin:$HOME/.local/bin:$HOME/.foundry/bin"`.
 - Pesan error server (validasi) sebagian masih Indonesia saat UI English; kamus punya terjemahan untuk yang umum.
+
+## Update 9 Okt 2026, malam (sesi lanjutan)
+
+- Suara video pitch sudah VoiceStudio (`~/Documents/URSSET-videos/pitch/ursset-pitch-en*.mp4`, cadangan Samantha di `backup-samantha/`); **belum didengarkan Septian**.
+- Kontrak **v2** dideploy ulang (alamat di README); v1 tetap di chain, riwayat di `docs/DEPLOYMENTS.md` (setoran sewa salah ketik Rp100.500/unit).
+- Guardrail setor sewa (maks 5% harga unit per unit per setoran) di server dan UI; hardening API (drip per akun, rate limit, passcode konstan-waktu); perbaikan UX wajib; dokumen bisnis/juri diperbaiki. Lihat `docs/SECURITY.md` bagian API layer.
+- Video demo English: `~/Documents/URSSET-videos/demo/ursset-demo-en.mp4` (+ `.srt`), 2:52, dibuat dari rekaman akun nyata di v2; skrip rekam di scratchpad, perakit di `demo/assemble.mjs`. Adegan teman-join digantikan demonstrasi link Urunan Room tanpa login.
+- Sisa: Septian mendengarkan kedua video, unggah, isi TODO SUBMISSION (link video/deck, bio, akses operator), submit. Ganti `OPERATOR_PASSCODE` setelah hackathon (pernah tertulis di obrolan). Hapus `demo/chrome-profile` (berisi sesi login).
