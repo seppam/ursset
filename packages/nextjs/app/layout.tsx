@@ -1,27 +1,24 @@
-
-import "@rainbow-me/rainbowkit/styles.css";
-import "@scaffold-ui/components/styles.css";
-import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
-import { ThemeProvider } from "~~/components/ThemeProvider";
+import type { Metadata, Viewport } from "next";
+import { Header } from "~~/components/Header";
+import { Providers } from "~~/components/Providers";
 import "~~/styles/globals.css";
-import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
+export const metadata: Metadata = {
+  title: "URSSET: urunan asset",
+  description: "3 langkah, kamu punya aset. Urunan bareng teman beli rumah kos, terima sewa, jual kapan saja.",
+};
 
-export const metadata = getMetadata({
-  title: 'Scaffold-ETH 2 App',
-  description: 'Built with 🏗 Scaffold-ETH 2'
-});
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#0f9d6e" };
 
-const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html suppressHydrationWarning className={``}>
+    <html lang="id">
       <body>
-        <ThemeProvider enableSystem>
-          <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>
-        </ThemeProvider>
+        <Providers>
+          <Header />
+          <main className="mx-auto w-full max-w-md px-4 pb-24 pt-4">{children}</main>
+        </Providers>
       </body>
     </html>
   );
-};
-
-export default ScaffoldEthApp;
+}

@@ -1,78 +1,46 @@
+import { ActivityFeed } from "~~/components/ActivityFeed";
+import { PropertyCard } from "~~/components/PropertyCard";
 
-"use client";
+const steps = [
+  { n: 1, title: "Masuk", body: "Email atau Google, 10 detik" },
+  { n: 2, title: "Isi saldo", body: "QRIS, mulai Rp10 ribu" },
+  { n: 3, title: "Urunan", body: "Satu tap, kamu punya aset" },
+];
 
-import { useAccount } from "wagmi";
-import { Address } from "@scaffold-ui/components";
-import type { NextPage } from "next";
-import Link from "next/link";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useTargetNetwork } from "~~/hooks/scaffold-eth";
-
-
-const Home: NextPage = () => {
-  const { address: connectedAddress } = useAccount();
-  const { targetNetwork } = useTargetNetwork();
-
+export default function Home() {
   return (
-    <>
-      <div className="flex items-center flex-col grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">Scaffold-ETH 2</span>
-            
-          </h1>
-          <div className="flex justify-center items-center space-x-2 flex-col">
-            <p className="my-2 font-medium">Connected Address:</p>
-            <Address address={connectedAddress} chain={targetNetwork} />
-          </div>
-          
-<p className="text-center text-lg">
-  Get started by editing{" "}
-  <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-    packages/nextjs/app/page.tsx
-  </code>
-</p>
-<p className="text-center text-lg">
-  Edit your smart contract{" "}
-  <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-    YourContract.sol
-  </code>{" "}
-  in{" "}
-  <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-    packages/hardhat/contracts
-  </code>
-</p>
+    <div className="space-y-4">
+      <section className="pt-2">
+        <span className="chip">Demo · jaringan uji</span>
+        <h1 className="mt-2 text-3xl font-black leading-tight">
+          3 langkah,
+          <br />
+          kamu punya aset.
+        </h1>
+        <p className="mt-2 text-muted">
+          Urunan bareng teman beli bagian rumah kos, terima sewanya tiap bulan, dan jual lagi kapan saja.
+        </p>
+      </section>
 
-        </div>
-
-        <div className="grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col md:flex-row">
-            <div className="flex flex-col bg-base-100 border border-base-300 px-10 py-10 text-center items-center max-w-xs">
-              <BugAntIcon className="h-8 w-8" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contracts
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
-            <div className="flex flex-col bg-base-100 border border-base-300 px-10 py-10 text-center items-center max-w-xs">
-              <MagnifyingGlassIcon className="h-8 w-8" />
-              <p>
-                Explore your local transactions with the{" "}
-                <Link href="/blockexplorer" passHref className="link">
-                  Block Explorer
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
+      <section className="grid grid-cols-3 gap-2">
+        {steps.map(s => (
+          <div key={s.n} className="card p-3">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">
+              {s.n}
+            </span>
+            <p className="mt-2 text-sm font-extrabold">{s.title}</p>
+            <p className="text-xs text-muted">{s.body}</p>
           </div>
-        </div>
-      </div>
-    </>
+        ))}
+      </section>
+
+      <PropertyCard />
+      <ActivityFeed />
+
+      <p className="px-1 text-xs text-muted">
+        Ini demo hackathon di jaringan uji dengan data ilustrasi dan Rupiah uji. Bukan penawaran investasi dan tidak ada
+        imbal hasil yang dijanjikan.
+      </p>
+    </div>
   );
-};
-
-export default Home;
+}
