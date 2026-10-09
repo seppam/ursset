@@ -2,6 +2,8 @@
 
 Ethereum Jakarta Hackathon 2026, theme Real-World Assets. App: https://ursset.vercel.app | Code: https://github.com/seppam/ursset
 
+> **Disclaimer / Penafian:** Testnet demo, illustrative data. No returns promised, not an investment offer. / Demo di testnet, data ilustrasi. Tidak ada imbal hasil yang dijanjikan, bukan penawaran investasi.
+
 Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo Day, live) and `## English version` (uploaded pitch video, international judges). All claims match the repo. Anything unavailable is marked `TODO:`; never replace a TODO with an invented number.
 
 ---
@@ -14,7 +16,7 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 
 **Di slide**
 - 3 langkah, kamu punya aset.
-- Urunan bareng teman beli bagian rumah kos, terima sewanya, jual lagi kapan saja.
+- Urunan bareng teman beli bagian rumah kos, terima sewanya, dan unit dapat dijual ke investor terverifikasi.
 - Mulai dari Rp10.000 per unit.
 - Rina, 24 tahun, karyawan, belum pernah punya properti.
 
@@ -38,14 +40,14 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 
 ### Slide 3: Solusi (0:45-1:20)
 
-**Judul:** Tiga langkah, satu link urunan, sewa yang bisa diperiksa
+**Judul:** Tiga langkah, satu link urunan, setoran sewa yang bisa diperiksa
 
 **Di slide**
 - 1 Masuk dengan email/Google (dompet otomatis, tanpa seed phrase, gas ditanggung aplikasi).
 - 2 Isi saldo Rupiah uji lewat QRIS (simulasi) + cek identitas ringan.
 - 3 Urunan sekali tap; unit masuk ke dompetmu.
 - Urunan Room: satu link dan target; tiap teman bayar bagiannya, unit ke dompet masing-masing. Tidak ada yang memegang uang orang lain.
-- Setiap setoran sewa dan pembagiannya adalah event publik.
+- Setiap setoran sewa dan pembagiannya adalah event publik. Kebenaran penyewaan kos tetap bergantung pada operator/SPV dan audit; itu risiko yang kami akui.
 
 **Visual:** tiga layar ponsel (Masuk, Isi saldo, Urunan) dan layar Urunan Room dengan bar progres.
 
@@ -53,11 +55,11 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 
 ### Slide 4: Kenapa onchain (1:20-1:50)
 
-**Judul:** Kepemilikan dan sewa yang bisa diverifikasi sendiri
+**Judul:** Kepemilikan, setoran sewa, dan pembagiannya bisa diverifikasi sendiri
 
 **Di slide**
 - Kepemilikan, sewa, dan jual-beli antar investor terjadi di buku besar publik yang tidak dikendalikan operator.
-- Investor memeriksa sendiri tanpa mempercayai database.
+- Investor memeriksa sendiri tanpa mempercayai database: setoran sewa dan pembagiannya bisa diperiksa. Kebenaran penyewaan kos tetap bergantung pada operator/SPV dan audit; itu risiko yang kami akui.
 - KYC dipaksa oleh smart contract: transfer ke dompet yang belum terverifikasi ditolak kontrak, bukan aplikasi.
 - Pasar jual-beli non-kustodian; penjual tetap menerima sewa selama unit dijual.
 
@@ -70,14 +72,15 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 **Judul:** Pemilik membayar, investor tidak
 
 **Di slide**
-- Biaya listing dari pemilik: sekitar 3% dari dana terkumpul (asumsi yang akan divalidasi).
+- Biaya listing dari pemilik: sekitar 3% dari dana terkumpul. Ini asumsi yang belum divalidasi dan belum diimplementasikan di kontrak.
+- Contoh ilustrasi: dana terkumpul Rp500 juta -> Rp15 juta per listing, dibayar sekali.
 - Pemilik butuh modal renovasi atau tambah kamar tanpa agunan bank.
 - Investor tidak membayar biaya platform.
-- Biaya pasar sekunder: fase berikutnya.
+- Pendapatan berulang (biaya pasar sekunder, pengelolaan sewa): fase berikutnya.
 
 **Visual:** Pemilik -> biaya listing -> URSSET; Investor -> tanpa biaya.
 
-**Catatan (15 dtk):** "Yang membayar adalah pemilik, lewat biaya listing sekitar 3 persen dari dana terkumpul. Ini asumsi yang masih harus kami validasi dengan pemilik kos. Investor tidak membayar biaya platform."
+**Catatan (15 dtk):** "Yang membayar adalah pemilik, lewat biaya listing sekitar 3 persen dari dana terkumpul. Contohnya, dana Rp500 juta berarti Rp15 juta per listing, sekali bayar. Ini asumsi yang belum divalidasi dan belum ada di kontrak. Pendapatan berulang, seperti biaya pasar sekunder dan pengelolaan sewa, adalah fase berikutnya."
 
 ### Slide 6: Kepatuhan (2:05-2:30)
 
@@ -87,6 +90,7 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 - **Batas:** token yang mewakili hak atas sewa properti dapat dianggap produk keuangan yang diawasi OJK, dan pembayaran di Indonesia harus dalam Rupiah.
 - **Jalan:** kami menempuh OJK Regulatory Sandbox, seperti preseden tokenisasi properti sebelumnya, dengan properti dipegang SPV badan hukum dan Rupiah masuk/keluar lewat penyedia pembayaran berlisensi BI.
 - **Sekarang:** untuk hackathon, testnet, non-kustodian, data properti ilustrasi, tanpa dana pengguna sungguhan.
+- **Catatan, belum dipastikan:** sewa kemungkinan terkena PPh dan/atau PPN; legalitas hak atas sewa di SPV perlu struktur hukum yang jelas; pengawasan aset kripto di Indonesia kini beralih ke OJK, jadi kerangka aturannya bisa berubah. Kami belum punya nasihat hukum atau pajak.
 
 **Visual:** tiga kolom Batas / Jalan / Sekarang.
 
@@ -97,7 +101,7 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 **Judul:** Yang sudah jalan, dan yang kami butuhkan
 
 **Di slide**
-- Sudah dibangun: 7 kontrak, 45 tes Foundry lulus, skrip end-to-end di testnet, aplikasi hidup dua bahasa.
+- Sudah dibangun: 7 jenis kontrak, 45 tes Foundry lulus, skrip end-to-end di testnet, aplikasi hidup dua bahasa.
 - Traksi pasar: belum ada pengguna nyata; ini demo di testnet. Berikutnya: pilot dengan satu kos dan validasi pengguna.
 - Berikutnya: pilot satu kos nyata, aplikasi sandbox OJK, mitra pembayaran berlisensi, biaya pasar sekunder, banyak properti.
 - Ajakan: mentor regulasi dan pemilik kos.
@@ -118,7 +122,7 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 
 **Visual:** diagram README: PropertyFactory, PropertyToken, RentDistributor, PrimarySale (+ room), Marketplace, KYCRegistry, MockIDR.
 
-**Catatan:** RentDistributor memakai akumulator pro rata, jadi biaya setoran tidak naik seiring jumlah pemegang. Batas jujur: testnet, QRIS dan KYC simulasi, MockIDR melewati approve, satu kunci operator.
+**Catatan:** RentDistributor memakai akumulator pro rata, jadi biaya setoran tidak naik seiring jumlah pemegang. Batas jujur: testnet, QRIS dan KYC simulasi, MockIDR melewati approve, satu kunci operator (yang juga bisa un-verify dompet). Kontrak diganti saat demo (riwayat di `docs/DEPLOYMENTS.md`).
 
 ### Peta ke kriteria juri
 
@@ -143,7 +147,7 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 
 **On slide**
 - 3 steps, and you own an asset.
-- Pool money with friends, buy part of a boarding house, collect the rent, resell any time.
+- Pool money with friends, buy part of a boarding house, collect the rent, and units can be sold to verified investors.
 - Units start at Rp10,000.
 - Rina, 24, an employee, has never owned property.
 
@@ -167,14 +171,14 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 
 ### Slide 3: Solution (0:45-1:20)
 
-**Title:** Three steps, one Urunan link, rent anyone can verify
+**Title:** Three steps, one Urunan link, rent deposits anyone can verify
 
 **On slide**
 - 1 Sign in with email or Google (wallet created for you, no seed phrase, gas covered by the app).
 - 2 Top up test Rupiah via QRIS (simulated) plus a light identity check.
 - 3 Urunan in one tap; units go to your wallet.
 - Urunan Room: one link and a shared target; each friend pays their own share, units go to each person's own wallet. Nobody holds anyone else's money.
-- Every rent deposit and its split is a public event.
+- Every rent deposit and its split is a public event. Whether the rooms are really rented still depends on the operator/SPV and on audits; that is a risk we acknowledge.
 
 **Visual:** three phone screens (Sign in, Top up, Urunan) beside the Urunan Room screen with a progress bar.
 
@@ -182,11 +186,11 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 
 ### Slide 4: Why onchain (1:20-1:50)
 
-**Title:** Ownership and rent you can verify yourself
+**Title:** Ownership, rent deposits and their split you can verify yourself
 
 **On slide**
 - Ownership, rent payouts and trades between investors happen on a public ledger the operator does not control.
-- Investors verify without trusting a database.
+- Investors verify without trusting a database: rent deposits and their split can be checked. Whether the rooms are really rented still depends on the operator/SPV and on audits; that is a risk we acknowledge.
 - KYC is enforced by the smart contract: a transfer to an unverified wallet is rejected by the contract, not by the app.
 - Non-custodial resale; the seller keeps earning rent while listed.
 
@@ -199,14 +203,15 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 **Title:** The owner pays, the investor does not
 
 **On slide**
-- Listing fee from the property owner: about 3% of funds raised (assumption to validate).
+- Listing fee from the property owner: about 3% of funds raised. This is an unvalidated assumption and is not implemented in the contracts.
+- Illustration only: Rp500 million raised -> Rp15 million per listing, paid once.
 - Owners need renovation or new-room capital without bank collateral.
 - Investors pay no platform fee.
-- Secondary-market fee: a later phase.
+- Recurring revenue (secondary-market fees, rent management): a later phase.
 
 **Visual:** Owner -> listing fee -> URSSET; Investor -> no fee.
 
-**Speaker notes (15 s):** "The property owner pays a listing fee, about 3 percent of funds raised. That is an assumption we still need to validate with boarding-house owners. Investors pay no platform fee."
+**Speaker notes (15 s):** "The property owner pays a listing fee, about 3 percent of funds raised. For illustration, Rp500 million raised would mean Rp15 million per listing, paid once. That is an unvalidated assumption and it is not in the contracts yet. Recurring revenue, such as secondary-market fees and rent management, is a later phase."
 
 ### Slide 6: Compliance (2:05-2:30)
 
@@ -216,6 +221,7 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 - **Limit:** Tokens representing rights to property rent may be treated as financial products supervised by OJK, and payments in Indonesia must be in Rupiah.
 - **Path:** We pursue the OJK Regulatory Sandbox, like earlier property tokenization precedents, with the property held by a legal-entity SPV and Rupiah in and out through a BI-licensed payment provider.
 - **Now:** For the hackathon: testnet, non-custodial, illustrative property data, no real user funds.
+- **Notes, not settled:** rent is likely subject to income tax and/or VAT; the legal standing of rent rights held in an SPV needs a clear legal structure; crypto-asset oversight in Indonesia has moved to OJK, so the rules may change. We have no legal or tax advice yet.
 
 **Visual:** three columns Limit / Path / Now.
 
@@ -226,7 +232,7 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 **Title:** What exists, and what we need
 
 **On slide**
-- Built: 7 contracts, 45 passing Foundry tests (including invariant and fuzz tests), an end-to-end script on the testnet, a live app in two languages.
+- Built: 7 contract types, 45 passing Foundry tests (including invariant and fuzz tests), an end-to-end script on the testnet, a live app in two languages.
 - Market traction: no real users yet; this is a testnet demo. Next: a pilot with one boarding house and user validation.
 - Next: pilot with one real boarding house, OJK sandbox application, licensed payment partner, secondary-market fees, more properties.
 - Ask: regulatory mentors and boarding-house owners.
@@ -247,7 +253,7 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 
 **Visual:** README diagram: PropertyFactory, PropertyToken, RentDistributor, PrimarySale (+ rooms), Marketplace, KYCRegistry, MockIDR.
 
-**Speaker notes:** RentDistributor uses a pro rata accumulator, so a deposit costs the same regardless of the number of holders. Honest limits: testnet only, QRIS and KYC simulated, MockIDR skips approvals, one operator key.
+**Speaker notes:** RentDistributor uses a pro rata accumulator, so a deposit costs the same regardless of the number of holders. Honest limits: testnet only, QRIS and KYC simulated, MockIDR skips approvals, one operator key (which can also un-verify wallets). The contracts were redeployed during the build (history in `docs/DEPLOYMENTS.md`).
 
 ### Mapping to judging criteria
 
