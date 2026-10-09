@@ -71,7 +71,7 @@ Contracts were redeployed during the build; the history (including why) is in `d
 - Contract addresses (Robinhood Chain Testnet, chain ID 46630; full list with explorer links in the README): KYCRegistry `0x5146ffc33d970cea588d96ec6b66d7fed74ebc49`, MockIDR `0x286db2aef28ddb1928d16075f972edb477851934`, PropertyFactory `0x17130f4e84634f6f6c1bcd0bb3c606b4325b676a`
 
 ## Team
-Septian, solo builder (product, smart contracts, frontend).
+Muhamad Septian Pamungkas, solo builder (product, smart contracts, frontend).
 Bio: TODO: one or two sentences, background and relevant experience.
 Contact/social: TODO: link (optional).
 
