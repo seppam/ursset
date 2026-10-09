@@ -18,7 +18,9 @@ export function CreateRoom() {
   const router = useRouter();
   const { authenticated, login } = usePrivy();
   const { c, info, name } = useProp();
-  const [title, setTitle] = useState(`${t("Urunan Kos")} ${name}`.slice(0, 40));
+  const [typedTitle, setTitle] = useState<string | null>(null);
+  // Default to the property name once it has loaded, until the user types their own title.
+  const title = typedTitle ?? `${t("Urunan Kos")} ${name}`.slice(0, 40);
   const [target, setTarget] = useState(1000);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
