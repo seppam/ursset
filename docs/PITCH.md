@@ -104,7 +104,7 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 
 **Visual:** garis waktu tiga titik (sekarang, pilot, sandbox), kotak TODO traksi, QR ke ursset.vercel.app.
 
-**Catatan (30 dtk):** "Yang ada bukan hanya slide: tujuh kontrak, 26 tes lulus, dan aplikasi yang bisa dicoba sekarang. Traksi pasar: [TODO data nyata, atau katakan jujur belum ada]. Berikutnya: pilot dengan satu kos nyata, sandbox OJK, mitra pembayaran. Saya mencari mentor regulasi dan pemilik kos. Terima kasih."
+**Catatan (30 dtk):** "Yang ada bukan hanya slide: tujuh kontrak, 45 tes lulus, dan aplikasi yang bisa dicoba sekarang. Traksi pasar: [TODO data nyata, atau katakan jujur belum ada]. Berikutnya: pilot dengan satu kos nyata, sandbox OJK, mitra pembayaran. Saya mencari mentor regulasi dan pemilik kos. Terima kasih."
 
 ### Slide cadangan: Arsitektur
 
