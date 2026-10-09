@@ -13,5 +13,11 @@
     "Sertifikat (SHGB atas nama SPV)",
     "Izin bangunan",
     "Laporan keuangan 12 bulan terakhir"
+  ],
+  "aboutEn": "A three-storey boarding house in the Dago area, close to campuses and eateries. Funds go to renovating bathrooms and adding a shared kitchen. The data on this page is illustrative, for the hackathon demo.",
+  "documentsEn": [
+    "Certificate (SHGB in the SPV's name)",
+    "Building permit",
+    "Financial report for the last 12 months"
   ]
 }

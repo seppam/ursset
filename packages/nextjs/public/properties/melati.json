@@ -13,5 +13,11 @@
     "Sertifikat (SHGB atas nama SPV)",
     "Polis asuransi kebakaran",
     "Perjanjian sewa dan laporan keuangan"
+  ],
+  "aboutEn": "A 20-room boarding house near a campus. The owner needs capital to add rooms without bank collateral. The data on this page is illustrative, for the hackathon demo.",
+  "documentsEn": [
+    "Certificate (SHGB in the SPV's name)",
+    "Fire insurance policy",
+    "Lease agreement and financial reports"
   ]
 }

@@ -13,11 +13,11 @@ import { DEPLOY_BLOCK } from "~~/lib/contracts";
 import { num, rp } from "~~/lib/format";
 import { abis } from "~~/lib/generated/ursset";
 import { usePropMe, useSaleInfo } from "~~/lib/hooks";
-import { useT } from "~~/lib/i18n";
+import { useI18n, useT } from "~~/lib/i18n";
 import { PropertyProvider, useProp, useProperties } from "~~/lib/properties";
 
 function Detail() {
-  const t = useT();
+  const { t, lang } = useI18n();
   const { info, meta, c, name } = useProp();
   const sale = useSaleInfo();
   const me = usePropMe();
@@ -129,9 +129,9 @@ function Detail() {
 
         <section className="card p-4 text-sm">
           <h3 className="font-extrabold">{t("Tentang properti")}</h3>
-          <p className="mt-1 text-muted">{meta?.about}</p>
+          <p className="mt-1 text-muted">{lang === "en" && meta?.aboutEn ? meta.aboutEn : meta?.about}</p>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-muted">
-            {meta?.documents.map(d => (
+            {(lang === "en" && meta?.documentsEn ? meta.documentsEn : meta?.documents)?.map(d => (
               <li key={d}>{d}</li>
             ))}
           </ul>

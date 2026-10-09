@@ -22,8 +22,10 @@ export type Meta = {
   occupancy: number;
   totalValue: number;
   about: string;
+  aboutEn?: string;
   images: string[];
   documents: string[];
+  documentsEn?: string[];
 };
 
 /** Fetches the offchain property JSON and makes its image links absolute. */
@@ -49,6 +51,8 @@ export const metaQuery = (uri: string) => ({
       occupancy: Number(json.occupancy ?? 0),
       totalValue: Number(json.totalValue ?? 0),
       about: String(json.about ?? ""),
+      aboutEn: json.aboutEn ? String(json.aboutEn) : undefined,
+      documentsEn: Array.isArray(json.documentsEn) ? json.documentsEn.map(String) : undefined,
       images: Array.isArray(json.images) ? json.images.map((i: string) => abs(String(i))) : [],
       documents: Array.isArray(json.documents) ? json.documents.map(String) : [],
     };
