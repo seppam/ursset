@@ -1,6 +1,8 @@
 import { put } from "@vercel/blob";
 import { HttpError, type ListingInput, fail, listProperty, requireOperatorCode } from "~~/lib/server/operator";
 
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
+
 const text = (v: unknown, max: number) =>
   String(v ?? "")
     .trim()
@@ -19,6 +21,40 @@ const url = (v: unknown) => {
   }
 };
 
+const isOurBlob = (u: string) => new URL(u).hostname.endsWith(".public.blob.vercel-storage.com");
+
+/**
+ * Copies a pasted image link into our own storage. Many sites block hotlinking, so a link that works in
+ * the owner's browser would show up broken for everyone else; a copy we host always loads.
+ */
+async function rehost(source: string): Promise<string> {
+  if (isOurBlob(source)) return source;
+  let res: Response;
+  try {
+    res = await fetch(source, {
+      signal: AbortSignal.timeout(10_000),
+      headers: { "user-agent": "Mozilla/5.0 (compatible; URSSET/1.0)", accept: "image/*" },
+    });
+  } catch {
+    throw new HttpError(400, "Link gambar tidak bisa dibuka. Coba unggah file atau pakai link lain.");
+  }
+  const type = res.headers.get("content-type")?.split(";")[0] ?? "";
+  if (!res.ok || !type.startsWith("image/"))
+    throw new HttpError(
+      400,
+      "Link itu bukan gambar langsung. Klik kanan gambarnya lalu salin alamat gambar, atau unggah file.",
+    );
+  const bytes = await res.arrayBuffer();
+  if (bytes.byteLength > MAX_IMAGE_BYTES) throw new HttpError(400, "Gambar maksimal 4 MB");
+  const ext = type.split("/")[1]?.replace(/[^a-z0-9]/gi, "") || "img";
+  const blob = await put(`properties/${Date.now()}-link.${ext}`, bytes, {
+    access: "public",
+    contentType: type,
+    addRandomSuffix: true,
+  });
+  return blob.url;
+}
+
 /** Lists a new property: validates the form, stores the metadata JSON, then deploys the contracts via the factory. */
 export async function POST(req: Request) {
   try {
@@ -26,6 +62,13 @@ export async function POST(req: Request) {
     requireOperatorCode(body.passcode);
 
     const unitPrice = int(body.unitPrice ?? 10_000, 1000, 1_000_000, "Harga unit");
+    const hasBlob = Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+    const pasted = (Array.isArray(body.images) ? body.images : [])
+      .map(url)
+      .filter((u: string | null): u is string => !!u)
+      .slice(0, 6);
+    const images = hasBlob ? await Promise.all(pasted.map(rehost)) : pasted;
+
     const input: ListingInput = {
       name: text(body.name, 48),
       city: text(body.city, 48),
@@ -33,10 +76,7 @@ export async function POST(req: Request) {
       occupancy: int(body.occupancy, 0, 100, "Okupansi"),
       totalValue: int(body.totalValue, 100_000_000, 100_000_000_000, "Nilai properti"),
       about: text(body.about, 600),
-      images: (Array.isArray(body.images) ? body.images : [])
-        .map(url)
-        .filter((u: string | null): u is string => !!u)
-        .slice(0, 6),
+      images,
       documents: (Array.isArray(body.documents) ? body.documents : [])
         .map((d: unknown) => text(d, 80))
         .filter(Boolean)
@@ -60,7 +100,7 @@ export async function POST(req: Request) {
 
     // With Vercel Blob the JSON gets a short public URL; without it, the JSON travels inside the onchain URI.
     let metadataURI: string;
-    if (process.env.BLOB_READ_WRITE_TOKEN) {
+    if (hasBlob) {
       const blob = await put(`properties/${Date.now()}-meta.json`, json, {
         access: "public",
         contentType: "application/json",

@@ -4,6 +4,15 @@ import { Providers } from "~~/components/Providers";
 import "~~/styles/globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://ursset.vercel.app"),
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.png", sizes: "64x64", type: "image/png" },
+    ],
+    apple: "/apple-icon.png",
+  },
   title: "URSSET: urunan asset",
   description: "3 langkah, kamu punya aset. Urunan bareng teman beli rumah kos, terima sewa, jual kapan saja.",
 };

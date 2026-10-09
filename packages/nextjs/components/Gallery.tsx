@@ -10,7 +10,12 @@ export function Gallery({ images, alt }: { images: string[]; alt: string }) {
   return (
     <div>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={current} alt={alt} className="h-56 w-full rounded-t-[1.25rem] object-cover" />
+      <img
+        referrerPolicy="no-referrer"
+        src={current}
+        alt={alt}
+        className="h-56 w-full rounded-t-[1.25rem] object-cover"
+      />
       {images.length > 1 && (
         <div className="flex gap-2 overflow-x-auto p-2">
           {images.map((src, i) => (
@@ -21,7 +26,7 @@ export function Gallery({ images, alt }: { images: string[]; alt: string }) {
               aria-label={`${alt} ${i + 1}`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={src} alt="" className="h-full w-full object-cover" />
+              <img referrerPolicy="no-referrer" src={src} alt="" className="h-full w-full object-cover" />
             </button>
           ))}
         </div>

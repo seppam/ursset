@@ -173,6 +173,22 @@ const en: Record<string, string> = {
   "Properti terdaftar.": "Property listed.",
   "Lihat halaman properti": "View property page",
   Bahasa: "Language",
+  // menu, portfolio sections, city picker
+  Menu: "Menu",
+  "Tutup menu": "Close menu",
+  Beranda: "Home",
+  Investor: "Investor",
+  "Pemilik properti": "Property owners",
+  "Setor sewa": "Deposit rent",
+  "Properti kamu": "Your properties",
+  "Properti yang sebaiknya kamu miliki sekarang": "Properties you should own now",
+  "Tambah unit atau mulai dari properti lain, mulai Rp10.000.":
+    "Add units or start with another property, from Rp10,000.",
+  "Kamu belum punya unit di properti mana pun. Mulai dari yang di bawah.":
+    "You do not hold units in any property yet. Start with one below.",
+  "Cari kota…": "Search city…",
+  "Kota tidak ditemukan": "City not found",
+  "Gambar tidak dapat dimuat": "Image could not be loaded",
   // errors (client and server)
   "Ditolak oleh smart contract: wallet itu belum terverifikasi KYC.":
     "Rejected by the smart contract: that wallet is not KYC verified.",
@@ -197,6 +213,12 @@ const en: Record<string, string> = {
   "Terjadi kesalahan di server": "Something went wrong on the server",
   "Properti tidak ditemukan": "Property not found",
   "Permintaan gagal": "Request failed",
+  "Link gambar tidak bisa dibuka. Coba unggah file atau pakai link lain.":
+    "That image link could not be opened. Try uploading a file or another link.",
+  "Link itu bukan gambar langsung. Klik kanan gambarnya lalu salin alamat gambar, atau unggah file.":
+    "That link is not a direct image. Right-click the image and copy the image address, or upload a file.",
+  "Nama properti terlalu pendek": "Property name is too short",
+  "Jumlah unit terlalu besar": "Too many units",
   Gagal: "Failed",
   "Dokumen (satu per baris)": "Documents (one per line)",
 };

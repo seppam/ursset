@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { CityPicker } from "~~/components/CityPicker";
+import { IntInput } from "~~/components/IntInput";
 import { txUrl } from "~~/lib/chain";
 import { friendlyError, num, rp } from "~~/lib/format";
 import { useSaleInfo } from "~~/lib/hooks";
@@ -9,6 +11,8 @@ import { useT } from "~~/lib/i18n";
 import { PropertyProvider, useMetaMap, useProp, useProperties } from "~~/lib/properties";
 
 type Result = { ok: boolean; text: string; hash?: string; link?: string };
+
+const field = "mt-1 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink";
 
 function Banner({ result }: { result: Result | null }) {
   const t = useT();
@@ -35,13 +39,12 @@ function Banner({ result }: { result: Result | null }) {
 function RentForm({ passcode }: { passcode: string }) {
   const t = useT();
   const info = useSaleInfo();
+  const { info: prop } = useProp();
   const [perUnit, setPerUnit] = useState(100);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const circulating = Number(info.circulating ?? 0n);
   const amount = circulating * perUnit;
-  // The provider above knows which property is selected; its id is the factory index.
-  const { info: prop } = useProp();
 
   async function deposit() {
     setBusy(true);
@@ -77,13 +80,7 @@ function RentForm({ passcode }: { passcode: string }) {
       </dl>
       <label className="mt-3 block text-xs font-semibold text-muted">
         {t("Sewa per unit (Rp)")}
-        <input
-          type="number"
-          min={1}
-          value={perUnit}
-          onChange={e => setPerUnit(Number(e.target.value))}
-          className="mt-1 w-full rounded-lg border border-line px-3 py-2 text-sm text-ink"
-        />
+        <IntInput className={field} value={perUnit} onChange={setPerUnit} />
       </label>
       <button
         className="btn-main mt-4"
@@ -109,6 +106,36 @@ async function shrink(file: File): Promise<Blob> {
   canvas.getContext("2d")!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
   return new Promise((resolve, reject) =>
     canvas.toBlob(b => (b ? resolve(b) : reject(new Error("Gagal memproses gambar"))), "image/jpeg", 0.82),
+  );
+}
+
+function Thumb({ src, onRemove }: { src: string; onRemove: () => void }) {
+  const t = useT();
+  const [failed, setFailed] = useState(false);
+  return (
+    <div className="relative">
+      {failed ? (
+        <div className="flex h-20 w-full items-center justify-center rounded-lg bg-red-50 px-1 text-center text-[10px] text-red-700">
+          {t("Gambar tidak dapat dimuat")}
+        </div>
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={src}
+          alt=""
+          referrerPolicy="no-referrer"
+          onError={() => setFailed(true)}
+          className="h-20 w-full rounded-lg object-cover"
+        />
+      )}
+      <button
+        className="absolute right-1 top-1 rounded-full bg-black/60 px-1.5 text-xs text-white"
+        onClick={onRemove}
+        aria-label={t("Hapus")}
+      >
+        ×
+      </button>
+    </div>
   );
 }
 
@@ -181,11 +208,10 @@ function ListingForm({ passcode }: { passcode: string }) {
     }
   }
 
-  const input = "mt-1 w-full rounded-lg border border-line px-3 py-2 text-sm text-ink";
   const units = Math.floor(form.totalValue / unitPrice);
 
   return (
-    <section className="card p-5">
+    <section id="listing" className="card scroll-mt-20 p-5">
       <span className="chip">{t("Pemilik kos (demo)")}</span>
       <h2 className="mt-2 text-xl font-black">{t("Daftarkan properti baru")}</h2>
       <p className="text-sm text-muted">
@@ -198,48 +224,42 @@ function ListingForm({ passcode }: { passcode: string }) {
         <label className="text-xs font-semibold text-muted">
           {t("Nama properti")}
           <input
-            className={input}
+            className={field}
             value={form.name}
             onChange={e => setForm({ ...form, name: e.target.value })}
             placeholder="Kos Anggrek Yogyakarta"
           />
         </label>
-        <label className="text-xs font-semibold text-muted">
+        <div className="text-xs font-semibold text-muted">
           {t("Kota")}
-          <input
-            className={input}
-            value={form.city}
-            onChange={e => setForm({ ...form, city: e.target.value })}
-            placeholder="Yogyakarta, DI Yogyakarta"
-          />
-        </label>
+          <div className="mt-1">
+            <CityPicker
+              className={field.replace("mt-1 ", "")}
+              value={form.city}
+              onChange={city => setForm({ ...form, city })}
+            />
+          </div>
+        </div>
         <div className="grid grid-cols-2 gap-2">
           <label className="text-xs font-semibold text-muted">
             {t("Jumlah kamar")}
-            <input
-              type="number"
-              className={input}
-              value={form.rooms}
-              onChange={e => setForm({ ...form, rooms: Number(e.target.value) })}
-            />
+            <IntInput className={field} value={form.rooms} onChange={rooms => setForm({ ...form, rooms })} />
           </label>
           <label className="text-xs font-semibold text-muted">
             {t("Okupansi (%)")}
-            <input
-              type="number"
-              className={input}
+            <IntInput
+              className={field}
               value={form.occupancy}
-              onChange={e => setForm({ ...form, occupancy: Number(e.target.value) })}
+              onChange={occupancy => setForm({ ...form, occupancy: Math.min(100, occupancy) })}
             />
           </label>
         </div>
         <label className="text-xs font-semibold text-muted">
           {t("Nilai properti (Rp)")}
-          <input
-            type="number"
-            className={input}
+          <IntInput
+            className={field}
             value={form.totalValue}
-            onChange={e => setForm({ ...form, totalValue: Number(e.target.value) })}
+            onChange={totalValue => setForm({ ...form, totalValue })}
           />
         </label>
         <p className="-mt-1 text-xs text-muted">
@@ -248,7 +268,7 @@ function ListingForm({ passcode }: { passcode: string }) {
         <label className="text-xs font-semibold text-muted">
           {t("Deskripsi")}
           <textarea
-            className={input}
+            className={field}
             rows={3}
             value={form.about}
             onChange={e => setForm({ ...form, about: e.target.value })}
@@ -257,7 +277,7 @@ function ListingForm({ passcode }: { passcode: string }) {
         <label className="text-xs font-semibold text-muted">
           {t("Dokumen (satu per baris)")}
           <textarea
-            className={input}
+            className={field}
             rows={3}
             value={form.documents}
             onChange={e => setForm({ ...form, documents: e.target.value })}
@@ -269,17 +289,7 @@ function ListingForm({ passcode }: { passcode: string }) {
           {images.length > 0 && (
             <div className="mt-2 grid grid-cols-3 gap-2">
               {images.map(src => (
-                <div key={src} className="relative">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={src} alt="" className="h-20 w-full rounded-lg object-cover" />
-                  <button
-                    className="absolute right-1 top-1 rounded-full bg-black/60 px-1.5 text-xs text-white"
-                    onClick={() => setImages(images.filter(i => i !== src))}
-                    aria-label={t("Hapus")}
-                  >
-                    ×
-                  </button>
-                </div>
+                <Thumb key={src} src={src} onRemove={() => setImages(images.filter(i => i !== src))} />
               ))}
             </div>
           )}
@@ -304,7 +314,7 @@ function ListingForm({ passcode }: { passcode: string }) {
           )}
           <div className="mt-2 flex gap-2">
             <input
-              className={input.replace("mt-1 ", "")}
+              className={field.replace("mt-1 ", "")}
               placeholder={t("atau tempel link gambar")}
               value={link}
               onChange={e => setLink(e.target.value)}
@@ -325,7 +335,7 @@ function ListingForm({ passcode }: { passcode: string }) {
 
       <button
         className="btn-main mt-4"
-        disabled={busy || uploading || !passcode || form.name.trim().length < 3}
+        disabled={busy || uploading || !passcode || form.name.trim().length < 3 || !form.city}
         onClick={submit}
       >
         {busy ? t("Mendaftarkan di blockchain…") : t("Daftarkan properti")}
@@ -348,16 +358,11 @@ export default function Operator() {
       <section className="card p-5">
         <label className="block text-xs font-semibold text-muted">
           {t("Kode operator")}
-          <input
-            type="password"
-            value={passcode}
-            onChange={e => setPasscode(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-line px-3 py-2 text-sm text-ink"
-          />
+          <input type="password" value={passcode} onChange={e => setPasscode(e.target.value)} className={field} />
         </label>
       </section>
 
-      <section className="card p-5">
+      <section id="rent" className="card scroll-mt-20 p-5">
         <span className="chip">{t("Pemilik kos (demo)")}</span>
         <h1 className="mt-2 text-2xl font-black">{t("Setor sewa bulan ini")}</h1>
         <p className="text-sm text-muted">
@@ -365,11 +370,7 @@ export default function Operator() {
         </p>
         <label className="mt-3 block text-xs font-semibold text-muted">
           {t("Properti")}
-          <select
-            className="mt-1 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
-            value={current?.id ?? 0}
-            onChange={e => setSelected(Number(e.target.value))}
-          >
+          <select className={field} value={current?.id ?? 0} onChange={e => setSelected(Number(e.target.value))}>
             {metas.map(({ info, meta }) => (
               <option key={info.id} value={info.id}>
                 {meta?.name ?? `#${info.id + 1}`}

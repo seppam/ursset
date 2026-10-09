@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { usePrivy } from "@privy-io/react-auth";
 import { parseEventLogs } from "viem";
+import { IntInput } from "~~/components/IntInput";
 import { friendlyError } from "~~/lib/format";
 import { abis } from "~~/lib/generated/ursset";
 import { useSend } from "~~/lib/hooks";
@@ -26,7 +27,11 @@ export function CreateRoom() {
     setBusy(true);
     setError("");
     try {
-      const { receipt } = await send({ ...c.sale, functionName: "createRoom", args: [title, BigInt(target)] });
+      const { receipt } = await send({
+        ...c.sale,
+        functionName: "createRoom",
+        args: [title, BigInt(Math.max(10, target))],
+      });
       const [event] = parseEventLogs({ abi: abis.PrimarySale, eventName: "RoomCreated", logs: receipt.logs });
       router.push(`/p/${info.id}/room/${event.args.roomId}`);
     } catch (e) {
@@ -48,12 +53,10 @@ export function CreateRoom() {
       />
       <label className="mt-2 block text-xs font-semibold text-muted">
         {t("Target unit")}
-        <input
-          type="number"
-          min={10}
+        <IntInput
           className="mt-1 w-full rounded-lg border border-line px-3 py-2 text-sm"
           value={target}
-          onChange={e => setTarget(Math.max(10, Number(e.target.value)))}
+          onChange={setTarget}
         />
       </label>
       <button

@@ -7,5 +7,5 @@
   <path d="M164 262 V330 a92 92 0 0 0 184 0 V262" fill="none" stroke="#fff" stroke-width="42" stroke-linecap="round"/>
   <circle cx="256" cy="318" r="28" fill="#fbbf24"/>
 </g>
-  <text x="200" y="128" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="104" font-weight="900" letter-spacing="-2" fill="#0f9d6e">URSSET</text>
+  <text x="200" y="128" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="104" font-weight="900" letter-spacing="-2" fill="#ffffff">URSSET</text>
 </svg>

@@ -1,3 +1,5 @@
+<p align="center"><img src="packages/nextjs/public/logo.png" alt="URSSET" width="360"></p>
+
 # URSSET: urunan asset
 
 **3 langkah, kamu punya aset.** Urunan bareng teman beli bagian rumah kos, terima sewanya, dan jual lagi kapan saja.
