@@ -1,6 +1,8 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { enOwner } from "./i18n-owner";
+import { enPortfolio } from "./i18n-portfolio";
 
 export type Lang = "id" | "en";
 
@@ -245,6 +247,9 @@ const en: Record<string, string> = {
   "Dokumen (satu per baris)": "Documents (one per line)",
 };
 
+// Area-specific dictionaries live in their own files so several people can add strings without conflicts.
+const dictionary: Record<string, string> = { ...en, ...enPortfolio, ...enOwner };
+
 type Vars = Record<string, string | number>;
 type Ctx = { lang: Lang; setLang: (l: Lang) => void; t: (text: string, vars?: Vars) => string };
 
@@ -274,7 +279,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
   const t = useCallback(
     (text: string, vars?: Vars) => {
-      const base = lang === "en" ? (en[text] ?? text) : text;
+      const base = lang === "en" ? (dictionary[text] ?? text) : text;
       return vars ? base.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? `{${k}}`)) : base;
     },
     [lang],
