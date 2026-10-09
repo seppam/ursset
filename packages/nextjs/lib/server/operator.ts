@@ -39,11 +39,21 @@ function serial<T>(job: () => Promise<T>): Promise<T> {
   return run;
 }
 
+const isNonceClash = (e: unknown) => /nonce|underpriced|already known/i.test(String((e as Error)?.message ?? e));
+
+// Several serverless instances can share the operator key, so retry when two of them race for the same nonce.
 async function mined(send: () => Promise<`0x${string}`>) {
   return serial(async () => {
-    const hash = await send();
-    await publicClient.waitForTransactionReceipt({ hash });
-    return hash;
+    for (let attempt = 1; ; attempt++) {
+      try {
+        const hash = await send();
+        await publicClient.waitForTransactionReceipt({ hash });
+        return hash;
+      } catch (e) {
+        if (attempt >= 4 || !isNonceClash(e)) throw e;
+        await new Promise(r => setTimeout(r, 400 * attempt));
+      }
+    }
   });
 }
 

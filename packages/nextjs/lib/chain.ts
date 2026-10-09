@@ -2,9 +2,12 @@ import { defineChain } from "viem";
 
 export const EXPLORER_URL = "https://explorer.testnet.chain.robinhood.com";
 
-// The browser talks to the chain through this app's own /api/rpc proxy when NEXT_PUBLIC_RPC_URL is set,
-// which keeps working on networks that block the public RPC domain.
-export const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || "https://rpc.testnet.chain.robinhood.com";
+const DIRECT_RPC = "https://rpc.testnet.chain.robinhood.com";
+
+// In the browser every RPC call goes through this app's own /api/rpc proxy, so users on networks that block the
+// public RPC domain still work. Servers and scripts talk to the chain directly.
+export const RPC_URL =
+  process.env.NEXT_PUBLIC_RPC_URL || (typeof window !== "undefined" ? `${window.location.origin}/api/rpc` : DIRECT_RPC);
 
 export const robinhoodTestnet = defineChain({
   id: 46630,

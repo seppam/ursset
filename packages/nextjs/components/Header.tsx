@@ -22,7 +22,9 @@ export function Header() {
           <Link href="/portfolio" className={path === "/portfolio" ? "text-brand" : "text-muted"}>
             Portofolio
           </Link>
-          {!ready ? null : authenticated ? (
+          {!ready ? (
+            <span className="btn-ghost pointer-events-none opacity-50">Masuk</span>
+          ) : authenticated ? (
             <button className="btn-ghost max-w-[11rem] truncate" onClick={logout} title="Keluar">
               <span className="truncate">{me.address ? rp(me.idr) : label}</span>
             </button>

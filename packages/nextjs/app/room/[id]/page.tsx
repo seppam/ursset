@@ -53,10 +53,7 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
           Dibuat oleh {short(creator)} · {num(contributors)} orang ikut
         </p>
         <div className="mt-4">
-          <Progress value={Number(raised)} max={Number(target)} />
-          <p className="mt-1 text-sm">
-            <b>{num(raised)}</b> dari {num(target)} unit
-          </p>
+          <Progress value={Number(raised)} max={Number(target)} label="terkumpul" />
         </div>
         {mine ? <p className="mt-3 text-sm font-semibold text-brand-dark">Kontribusimu: {num(mine)} unit</p> : null}
         <button className="btn-ghost mt-4 w-full" onClick={share}>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { usePrivy } from "@privy-io/react-auth";
 import { parseEventLogs } from "viem";
 import { sale } from "~~/lib/contracts";
 import { friendlyError } from "~~/lib/format";
@@ -10,6 +11,7 @@ import { useSend } from "~~/lib/hooks";
 /** Starts an Urunan Room: a shared target friends fill with their own money. */
 export function CreateRoom() {
   const send = useSend();
+  const { authenticated, login } = usePrivy();
   const router = useRouter();
   const [title, setTitle] = useState("Urunan Kos Melati");
   const [target, setTarget] = useState(1000);
@@ -50,8 +52,12 @@ export function CreateRoom() {
           onChange={e => setTarget(Math.max(10, Number(e.target.value)))}
         />
       </label>
-      <button className="btn-main mt-3" disabled={busy || title.trim().length < 2} onClick={create}>
-        {busy ? "Membuat room…" : "Buat room dan dapatkan link"}
+      <button
+        className="btn-main mt-3"
+        disabled={busy || title.trim().length < 2}
+        onClick={authenticated ? create : login}
+      >
+        {busy ? "Membuat room…" : authenticated ? "Buat room dan dapatkan link" : "Masuk untuk membuat room"}
       </button>
       {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
     </div>
