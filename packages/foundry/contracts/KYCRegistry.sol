@@ -13,11 +13,13 @@ contract KYCRegistry is Ownable {
     error NotAuthorized();
 
     event VerificationSet(address indexed account, bool verified);
+    event RegistrarSet(address indexed account, bool allowed);
 
     constructor(address owner_) Ownable(owner_) { }
 
     function setRegistrar(address account, bool allowed) external onlyOwner {
         registrar[account] = allowed;
+        emit RegistrarSet(account, allowed);
     }
 
     function setVerified(address account, bool verified) external {

@@ -64,7 +64,7 @@ Testnet only. QRIS and KYC are simulations. `MockIDR` skips approvals as a test-
 - Demo video: TODO: video URL
 - Presentation deck: TODO: deck URL
 - Explorer: https://explorer.testnet.chain.robinhood.com
-- Contract addresses: TODO: list after the final redeploy (also in README)
+- Contract addresses (Robinhood Chain Testnet, chain ID 46630; full list with explorer links in the README): KYCRegistry `0x7229df70dbc6abba77cb8ce24b175079982f0acf`, MockIDR `0x7668c1978f5e3bb10bff606b3c2d081e0e1a7282`, PropertyFactory `0x5f0c4e0b03127ea3f251d7bf87d29be29f07c5f6`
 
 ## Team
 Septian, solo builder (product, smart contracts, frontend).

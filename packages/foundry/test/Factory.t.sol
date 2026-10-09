@@ -55,6 +55,9 @@ contract FactoryTest is Test {
         vm.prank(operator);
         uint256 id = factory.createProperty(_params(name, units));
         (address t, address s, address d, address m,,) = factory.properties(id);
+        // Rent deposits pull tIDR from the operator, who approves the distributor (it is not a trusted spender).
+        vm.prank(operator);
+        idr.approve(d, type(uint256).max);
         return (PropertyToken(t), PrimarySale(s), RentDistributor(d), Marketplace(m));
     }
 

@@ -61,6 +61,9 @@ abstract contract Deployed is Test {
         sale = PrimarySale(s);
         dist = RentDistributor(d);
         market = Marketplace(m);
+        // The distributor is not a trusted spender; the operator approves it like any normal ERC-20 spender.
+        vm.prank(operator);
+        idr.approve(address(dist), type(uint256).max);
     }
 }
 
@@ -437,11 +440,11 @@ contract SecurityTest is Deployed {
         idr.setTrustedSpender(stranger, true);
     }
 
-    /// F-04 (Low): the distributor is marked a trusted spender although it only ever pulls from its owner
-    /// (depositRent). Pure surplus privilege.
-    function test_KnownIssue_DistributorIsTrustedSpenderUnnecessarily() public view {
-        assertTrue(idr.trustedSpender(address(dist)));
-        assertEq(idr.allowance(dina, address(dist)), type(uint256).max);
+    /// F-04 (fixed): the factory no longer marks the distributor a trusted spender, so it cannot pull tIDR
+    /// from users without an allowance.
+    function test_DistributorIsNotATrustedSpender() public view {
+        assertFalse(idr.trustedSpender(address(dist)));
+        assertEq(idr.allowance(dina, address(dist)), 0);
     }
 
     /// F-05 (Low): rent is a snapshot at deposit time. A verified wallet that buys units from a seller right

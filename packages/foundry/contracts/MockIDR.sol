@@ -12,6 +12,9 @@ contract MockIDR is ERC20, Ownable {
     mapping(address => bool) public trustedSpender;
     mapping(address => bool) public registrar;
 
+    event RegistrarSet(address indexed account, bool allowed);
+    event TrustedSpenderSet(address indexed spender, bool trusted);
+
     error NotAuthorized();
 
     constructor(address owner_) ERC20("Test Rupiah", "tIDR") Ownable(owner_) { }
@@ -26,11 +29,13 @@ contract MockIDR is ERC20, Ownable {
 
     function setRegistrar(address account, bool allowed) external onlyOwner {
         registrar[account] = allowed;
+        emit RegistrarSet(account, allowed);
     }
 
     function setTrustedSpender(address spender, bool trusted) external {
         if (msg.sender != owner() && !registrar[msg.sender]) revert NotAuthorized();
         trustedSpender[spender] = trusted;
+        emit TrustedSpenderSet(spender, trusted);
     }
 
     function allowance(address owner_, address spender) public view override returns (uint256) {

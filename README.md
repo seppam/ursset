@@ -8,7 +8,7 @@ Built for the [Ethereum Jakarta Hackathon 2026](https://www.hackquest.io/hackath
 
 | | |
 | --- | --- |
-| Live app | _TODO: Vercel URL_ |
+| Live app | https://ursset.vercel.app |
 | Demo video | _TODO: video URL_ |
 | Chain | Robinhood Chain Testnet (chain ID 46630) |
 | Explorer | https://explorer.testnet.chain.robinhood.com |
@@ -70,7 +70,21 @@ Investor (Next.js app, Privy login)          Operator (server, Next.js API route
 | `PrimarySale` | Fixed-price primary sale (Rp10,000 per unit) and Urunan Rooms (target, progress, contributors). |
 | `Marketplace` | Non-custodial fixed-price resale. Units stay in the seller's wallet and keep earning rent until filled. |
 
-The shared contracts (`KYCRegistry`, `MockIDR`, `PropertyFactory`) are written to [`packages/nextjs/lib/generated/ursset.ts`](packages/nextjs/lib/generated/ursset.ts) after each deploy. Each listed property's own contract addresses come from `PropertyFactory.properties(id)`. Current deployment: _TODO: list addresses with explorer links after the final deploy._
+The shared contracts (`KYCRegistry`, `MockIDR`, `PropertyFactory`) are written to [`packages/nextjs/lib/generated/ursset.ts`](packages/nextjs/lib/generated/ursset.ts) after each deploy. Each listed property's own contract addresses come from `PropertyFactory.properties(id)`. Current deployment:
+
+| Contract | Address (Robinhood Chain Testnet, 46630) |
+| --- | --- |
+| KYCRegistry | [`0x7229df70dbc6abba77cb8ce24b175079982f0acf`](https://explorer.testnet.chain.robinhood.com/address/0x7229df70dbc6abba77cb8ce24b175079982f0acf) |
+| MockIDR (tIDR) | [`0x7668c1978f5e3bb10bff606b3c2d081e0e1a7282`](https://explorer.testnet.chain.robinhood.com/address/0x7668c1978f5e3bb10bff606b3c2d081e0e1a7282) |
+| PropertyFactory | [`0x5f0c4e0b03127ea3f251d7bf87d29be29f07c5f6`](https://explorer.testnet.chain.robinhood.com/address/0x5f0c4e0b03127ea3f251d7bf87d29be29f07c5f6) |
+| Kos Melati Depok: PropertyToken | [`0xEC641f2B91c1aD0d3994185E068514F9c83e42e5`](https://explorer.testnet.chain.robinhood.com/address/0xEC641f2B91c1aD0d3994185E068514F9c83e42e5) |
+| Kos Melati Depok: PrimarySale | [`0xd0cdf6323482F91ABDA24e51F81383413378a5Ca`](https://explorer.testnet.chain.robinhood.com/address/0xd0cdf6323482F91ABDA24e51F81383413378a5Ca) |
+| Kos Melati Depok: RentDistributor | [`0x30ea41cC5C78Fb24Bf4CeCd05130806aD00a6b01`](https://explorer.testnet.chain.robinhood.com/address/0x30ea41cC5C78Fb24Bf4CeCd05130806aD00a6b01) |
+| Kos Melati Depok: Marketplace | [`0xDE698b02Cb0e35501fd94318C5d1BD49620f6fd2`](https://explorer.testnet.chain.robinhood.com/address/0xDE698b02Cb0e35501fd94318C5d1BD49620f6fd2) |
+| Kos Dago Asri Bandung: PropertyToken | [`0xF6727FD763a76A6387Ca9e5DD06aA47DC22DaF0C`](https://explorer.testnet.chain.robinhood.com/address/0xF6727FD763a76A6387Ca9e5DD06aA47DC22DaF0C) |
+| Kos Dago Asri Bandung: PrimarySale | [`0x926b1f62E996e1Ab6bAf3379e7c22A080Bd8E1ba`](https://explorer.testnet.chain.robinhood.com/address/0x926b1f62E996e1Ab6bAf3379e7c22A080Bd8E1ba) |
+| Kos Dago Asri Bandung: RentDistributor | [`0x3D9C2760471337E4e40C6068580476DCC9035dE6`](https://explorer.testnet.chain.robinhood.com/address/0x3D9C2760471337E4e40C6068580476DCC9035dE6) |
+| Kos Dago Asri Bandung: Marketplace | [`0x0fD00D2e2b6950d1cb2F04536fe154727907ccC6`](https://explorer.testnet.chain.robinhood.com/address/0x0fD00D2e2b6950d1cb2F04536fe154727907ccC6) |
 
 ## Run it locally
 
@@ -78,7 +92,7 @@ Requirements: Node 20+, Yarn, [Foundry](https://book.getfoundry.sh/getting-start
 
 ```bash
 yarn install
-cd packages/foundry && forge test            # 26 tests
+cd packages/foundry && forge test            # 45 tests
 
 # Frontend
 cp packages/nextjs/.env.example packages/nextjs/.env.local   # then fill in the values
@@ -138,6 +152,17 @@ Third-party code and services, with attribution:
 ## Business model
 
 Listing fee from the property owner (assumption: 3% of funds raised), because owners need capital for renovation or new rooms without bank collateral. Investors pay no platform fee. Secondary-market fees are a later phase.
+
+## Security review
+
+An independent review of all 7 contracts (access control, reentrancy and ordering, rent rounding, KYC revocation, marketplace staleness) found **no way for a non-operator user to steal funds or units, take rent twice, or move units to an unverified wallet**. Property-based tests pin the invariants: rent owed plus claimed never exceeds deposited, balances sum to supply, units only sit in verified wallets or the sale contract, and a stranger can never receive units. 45 Foundry tests pass.
+
+Honest limits of this testnet demo (details and proposed fixes in [`docs/SECURITY.md`](docs/SECURITY.md)):
+
+- One operator key can verify or un-verify wallets, mint test Rupiah, and, through the test-token shortcut in `MockIDR`, move test tIDR without approval. This exists only because `MockIDR` is a test token.
+- Un-verifying a holder freezes their units; rent they already earned stays claimable. A production design needs a recovery policy.
+- Rent is split with a snapshot at deposit time, so a wallet can buy units right before a deposit and sell right after (the operator can mitigate by depositing privately), and rounding can dust fractions of a rupiah.
+- KYC is a boolean flag set by the operator; no real identity check happens in the demo.
 
 ## License
 

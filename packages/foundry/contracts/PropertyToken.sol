@@ -18,6 +18,8 @@ contract PropertyToken is ERC20, Ownable {
     string public documentURI;
     bool public inventoryMinted;
 
+    event DistributorSet(address indexed distributor);
+
     error NotVerified(address account);
     error AlreadyMinted();
     error DistributorAlreadySet();
@@ -46,6 +48,7 @@ contract PropertyToken is ERC20, Ownable {
     function setDistributor(RentDistributor distributor_) external onlyOwner {
         if (address(distributor) != address(0)) revert DistributorAlreadySet();
         distributor = distributor_;
+        emit DistributorSet(address(distributor_));
     }
 
     /// @notice Mints the whole supply once into the sale contract, which sells it to investors.

@@ -1,6 +1,11 @@
 # URSSET security review
 
-Status: pre-submission review of the testnet demo. No contract was changed by this review; every fix below is a proposal.
+Status: pre-submission review of the testnet demo. The review itself changed no contract. Afterwards the owner applied two of the cheap proposals before the final deploy:
+
+- **F-04 fixed:** `PropertyFactory` no longer marks the `RentDistributor` a trusted spender. The operator approves the distributor like any ERC-20 spender (the server does this once per property).
+- **F-10 partly fixed:** `setRegistrar`, `setTrustedSpender` and `setDistributor` now emit events. `Ownable2Step` was not adopted: ownership hand-offs happen inside the factory in one transaction and a two-step flow would break that.
+
+All other findings below remain open and are documented as known limitations of the testnet demo.
 
 ## Scope and method
 

@@ -65,6 +65,7 @@ check((await read("idr", "balanceOf", [dina.address])) === 450000n, "dina paid R
 
 console.log("\n3. Rent");
 const circ = await read("dist", "circulating");
+await tx(operator, "operator approves distributor", w => w.writeContract({ ...c.idr, functionName: "approve", args: [c.dist.address, 2n ** 255n] }));
 await tx(operator, "operator deposits rent", w => w.writeContract({ ...c.dist, functionName: "depositRent", args: [circ * 100n] }));
 const pend = await read("dist", "pending", [dina.address]);
 check(pend === 500n, `dina pending rent Rp${pend} (expected Rp500 of Rp${circ * 100n})`);

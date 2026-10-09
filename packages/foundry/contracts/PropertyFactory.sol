@@ -72,7 +72,6 @@ contract PropertyFactory is Ownable {
 
         idr.setTrustedSpender(address(sale), true);
         idr.setTrustedSpender(address(market), true);
-        idr.setTrustedSpender(address(distributor), true);
 
         token.transferOwnership(operator);
         distributor.transferOwnership(operator);

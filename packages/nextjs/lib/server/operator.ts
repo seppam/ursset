@@ -131,6 +131,14 @@ export async function getProperty(id: number) {
 
 export async function depositRent(propertyId: number, amount: bigint) {
   const { distributor } = await getProperty(propertyId);
+  const owner = operatorAccount().address;
+  // The distributor pulls tIDR from the operator like any ERC-20 spender, so approve it once per property.
+  const allowance = await publicClient.readContract({ ...idr, functionName: "allowance", args: [owner, distributor] });
+  if (allowance < amount) {
+    await mined(() =>
+      walletClient().writeContract({ ...idr, functionName: "approve", args: [distributor, 2n ** 255n] }),
+    );
+  }
   return (
     await mined(() =>
       walletClient().writeContract({
