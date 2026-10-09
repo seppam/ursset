@@ -74,17 +74,17 @@ The shared contracts (`KYCRegistry`, `MockIDR`, `PropertyFactory`) are written t
 
 | Contract | Address (Robinhood Chain Testnet, 46630) |
 | --- | --- |
-| KYCRegistry | [`0x7229df70dbc6abba77cb8ce24b175079982f0acf`](https://explorer.testnet.chain.robinhood.com/address/0x7229df70dbc6abba77cb8ce24b175079982f0acf) |
-| MockIDR (tIDR) | [`0x7668c1978f5e3bb10bff606b3c2d081e0e1a7282`](https://explorer.testnet.chain.robinhood.com/address/0x7668c1978f5e3bb10bff606b3c2d081e0e1a7282) |
-| PropertyFactory | [`0x5f0c4e0b03127ea3f251d7bf87d29be29f07c5f6`](https://explorer.testnet.chain.robinhood.com/address/0x5f0c4e0b03127ea3f251d7bf87d29be29f07c5f6) |
-| Kos Melati Depok: PropertyToken | [`0xEC641f2B91c1aD0d3994185E068514F9c83e42e5`](https://explorer.testnet.chain.robinhood.com/address/0xEC641f2B91c1aD0d3994185E068514F9c83e42e5) |
-| Kos Melati Depok: PrimarySale | [`0xd0cdf6323482F91ABDA24e51F81383413378a5Ca`](https://explorer.testnet.chain.robinhood.com/address/0xd0cdf6323482F91ABDA24e51F81383413378a5Ca) |
-| Kos Melati Depok: RentDistributor | [`0x30ea41cC5C78Fb24Bf4CeCd05130806aD00a6b01`](https://explorer.testnet.chain.robinhood.com/address/0x30ea41cC5C78Fb24Bf4CeCd05130806aD00a6b01) |
-| Kos Melati Depok: Marketplace | [`0xDE698b02Cb0e35501fd94318C5d1BD49620f6fd2`](https://explorer.testnet.chain.robinhood.com/address/0xDE698b02Cb0e35501fd94318C5d1BD49620f6fd2) |
-| Kos Dago Asri Bandung: PropertyToken | [`0xF6727FD763a76A6387Ca9e5DD06aA47DC22DaF0C`](https://explorer.testnet.chain.robinhood.com/address/0xF6727FD763a76A6387Ca9e5DD06aA47DC22DaF0C) |
-| Kos Dago Asri Bandung: PrimarySale | [`0x926b1f62E996e1Ab6bAf3379e7c22A080Bd8E1ba`](https://explorer.testnet.chain.robinhood.com/address/0x926b1f62E996e1Ab6bAf3379e7c22A080Bd8E1ba) |
-| Kos Dago Asri Bandung: RentDistributor | [`0x3D9C2760471337E4e40C6068580476DCC9035dE6`](https://explorer.testnet.chain.robinhood.com/address/0x3D9C2760471337E4e40C6068580476DCC9035dE6) |
-| Kos Dago Asri Bandung: Marketplace | [`0x0fD00D2e2b6950d1cb2F04536fe154727907ccC6`](https://explorer.testnet.chain.robinhood.com/address/0x0fD00D2e2b6950d1cb2F04536fe154727907ccC6) |
+| KYCRegistry | [`0x5146ffc33d970cea588d96ec6b66d7fed74ebc49`](https://explorer.testnet.chain.robinhood.com/address/0x5146ffc33d970cea588d96ec6b66d7fed74ebc49) |
+| MockIDR (tIDR) | [`0x286db2aef28ddb1928d16075f972edb477851934`](https://explorer.testnet.chain.robinhood.com/address/0x286db2aef28ddb1928d16075f972edb477851934) |
+| PropertyFactory | [`0x17130f4e84634f6f6c1bcd0bb3c606b4325b676a`](https://explorer.testnet.chain.robinhood.com/address/0x17130f4e84634f6f6c1bcd0bb3c606b4325b676a) |
+| Kos Melati Depok: PropertyToken | [`0x19C7F8102e9bD4393feEF19e4d372BE378B42e2e`](https://explorer.testnet.chain.robinhood.com/address/0x19C7F8102e9bD4393feEF19e4d372BE378B42e2e) |
+| Kos Melati Depok: PrimarySale | [`0xD349471fd85CDab73592690Ea6323a076add801e`](https://explorer.testnet.chain.robinhood.com/address/0xD349471fd85CDab73592690Ea6323a076add801e) |
+| Kos Melati Depok: RentDistributor | [`0x7797583A83f46DA9A5d57985bd6B4a516a1cF26A`](https://explorer.testnet.chain.robinhood.com/address/0x7797583A83f46DA9A5d57985bd6B4a516a1cF26A) |
+| Kos Melati Depok: Marketplace | [`0xEef387528409F62f96D55d1ac65ea7C5a4F69602`](https://explorer.testnet.chain.robinhood.com/address/0xEef387528409F62f96D55d1ac65ea7C5a4F69602) |
+| Kos Dago Asri Bandung: PropertyToken | [`0x0f46a9ca04EC32A1fFc644C1B396Bfe0CFb5b41A`](https://explorer.testnet.chain.robinhood.com/address/0x0f46a9ca04EC32A1fFc644C1B396Bfe0CFb5b41A) |
+| Kos Dago Asri Bandung: PrimarySale | [`0xb8916A0cB79012c7C92Cc8130B084D3B9bCA35d1`](https://explorer.testnet.chain.robinhood.com/address/0xb8916A0cB79012c7C92Cc8130B084D3B9bCA35d1) |
+| Kos Dago Asri Bandung: RentDistributor | [`0x90a0B0782056C0C6f2Bd4b29aC884f468DDa992C`](https://explorer.testnet.chain.robinhood.com/address/0x90a0B0782056C0C6f2Bd4b29aC884f468DDa992C) |
+| Kos Dago Asri Bandung: Marketplace | [`0x8f092eD60713F081CC0CA883e0dE6bEA3e42B5D6`](https://explorer.testnet.chain.robinhood.com/address/0x8f092eD60713F081CC0CA883e0dE6bEA3e42B5D6) |
 
 ## Run it locally
 
