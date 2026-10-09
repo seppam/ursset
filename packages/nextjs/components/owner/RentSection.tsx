@@ -7,9 +7,7 @@ import { IntInput } from "~~/components/IntInput";
 import { friendlyError, num, rp } from "~~/lib/format";
 import { useSaleInfo } from "~~/lib/hooks";
 import { PropertyProvider, useMetaMap, useProp, useProperties } from "~~/lib/properties";
-
-// Must equal the server's per-unit rent limit (5% of the Rp10.000 unit price). The server enforces it; this only warns early.
-const MAX_RENT_PER_UNIT = 500;
+import { MAX_RENT_PER_UNIT } from "~~/lib/rentLimits";
 
 function RentForm({ passcode, onPasscodeProblem }: { passcode: string; onPasscodeProblem: (msg: string) => void }) {
   const t = useOwnerT();
