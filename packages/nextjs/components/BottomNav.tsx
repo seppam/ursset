@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChartIcon, HomeIcon, KeyIcon, MenuIcon } from "~~/components/Icons";
+import { ChartIcon, HomeIcon, KeyIcon, UserIcon } from "~~/components/Icons";
 import { useT } from "~~/lib/i18n";
 
 export const OPEN_MENU_EVENT = "ursset:open-menu";
@@ -11,6 +11,7 @@ const tabs = [
   { href: "/", label: "Beranda", Icon: HomeIcon, match: (p: string) => p === "/" || p.startsWith("/p/") },
   { href: "/portfolio", label: "Portofolio", Icon: ChartIcon, match: (p: string) => p.startsWith("/portfolio") },
   { href: "/operator", label: "Kelola", Icon: KeyIcon, match: (p: string) => p.startsWith("/operator") },
+  { href: "/profile", label: "Profil", Icon: UserIcon, match: (p: string) => p.startsWith("/profile") },
 ];
 
 /** Mobile tab bar: the three main places plus the menu drawer. Hidden on desktop, where the header has links. */
@@ -40,16 +41,6 @@ export function BottomNav() {
             </Link>
           );
         })}
-        <button
-          type="button"
-          className={`${cls} text-muted`}
-          onClick={() => window.dispatchEvent(new Event(OPEN_MENU_EVENT))}
-        >
-          <span className="px-4 py-1">
-            <MenuIcon size={22} />
-          </span>
-          {t("Menu")}
-        </button>
       </div>
     </nav>
   );

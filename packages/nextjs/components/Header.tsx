@@ -6,7 +6,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { usePrivy } from "@privy-io/react-auth";
 import { OPEN_MENU_EVENT } from "~~/components/BottomNav";
-import { ChartIcon, CloseIcon, CoinIcon, HomeIcon, KeyIcon, MenuIcon, PlusIcon, ShieldIcon } from "~~/components/Icons";
+import {
+  ChartIcon,
+  CloseIcon,
+  CoinIcon,
+  HomeIcon,
+  KeyIcon,
+  MenuIcon,
+  PlusIcon,
+  ShieldIcon,
+  UserIcon,
+} from "~~/components/Icons";
 import { Logo } from "~~/components/Logo";
 import { EXPLORER_URL } from "~~/lib/chain";
 import { rp, short } from "~~/lib/format";
@@ -18,6 +28,7 @@ type Item = { href: string; label: string; icon: ReactNode };
 const investor: Item[] = [
   { href: "/", label: "Beranda", icon: <HomeIcon size={20} /> },
   { href: "/portfolio", label: "Portofolio", icon: <ChartIcon size={20} /> },
+  { href: "/profile", label: "Profil", icon: <UserIcon size={20} /> },
   { href: "/#cara-kerja", label: "Cara kerja", icon: <ShieldIcon size={20} /> },
 ];
 const owner: Item[] = [
@@ -79,7 +90,7 @@ export function Header() {
               <Logo size={30} />
             </Link>
             <nav aria-label={t("Navigasi utama")} className="ml-4 hidden items-center gap-1 md:flex">
-              {[...investor.slice(0, 2), owner[0]].map(i => (
+              {[...investor.slice(0, 3), owner[0]].map(i => (
                 <Link
                   key={i.href}
                   href={i.href}
@@ -93,7 +104,7 @@ export function Header() {
           {!ready ? (
             <span className="btn-ghost pointer-events-none opacity-50">{t("Masuk")}</span>
           ) : authenticated ? (
-            <Link href="/portfolio" className="btn-ghost max-w-[9rem] truncate" title={t("Portofolio")}>
+            <Link href="/profile" className="btn-ghost max-w-[9rem] truncate" title={t("Isi saldo dan lihat dompet")}>
               <span className="truncate">{me.address ? rp(me.idr) : label}</span>
             </Link>
           ) : (

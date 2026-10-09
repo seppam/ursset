@@ -1,0 +1,71 @@
+// English translations for the profile screen. Indonesian text is the key.
+export const enProfile: Record<string, string> = {
+  Profil: "Profile",
+  "Isi saldo dan lihat dompet": "Top up and view wallet",
+  "Masuk untuk melihat dompet, saldo, dan riwayat transaksimu.":
+    "Sign in to see your wallet, balance and transaction history.",
+  Akunmu: "Your account",
+  Terverifikasi: "Verified",
+  "Data uji": "Test data",
+  "Isi saldo": "Top up",
+  "Saldo bertambah. Siap urunan.": "Balance updated. Ready to chip in.",
+  "Tarik saldo ke Rupiah": "Withdraw balance to Rupiah",
+  "Belum tersedia di demo: saldo ini adalah Rupiah uji (tIDR) dan tidak bisa ditarik. Cara kerjanya di versi produksi ada di panduan di bawah.":
+    "Not available in the demo: this balance is test Rupiah (tIDR) and cannot be withdrawn. How it works in production is in the guide below.",
+  "Dompet kamu": "Your wallet",
+  "Dompet dibuat otomatis saat kamu masuk. Alamat ini publik dan aman dibagikan; kuncinya tidak.":
+    "Your wallet is created automatically when you sign in. The address is public and safe to share; the key is not.",
+  Alamat: "Address",
+  Salin: "Copy",
+  Tersalin: "Copied",
+  Jaringan: "Network",
+  "Biaya jaringan": "Network fees",
+  "Ditanggung URSSET": "Covered by URSSET",
+  "Lihat dompet di explorer": "View wallet on explorer",
+  "Ekspor kunci dompet": "Export wallet key",
+  "Kunci ditampilkan di jendela aman milik Privy, bukan oleh URSSET. Simpan dan jangan bagikan ke siapa pun.":
+    "The key is shown in Privy's secure window, not by URSSET. Keep it safe and never share it.",
+  "Riwayat transaksi": "Transaction history",
+  "Dibaca langsung dari blockchain, jadi setiap baris punya bukti yang bisa dicek siapa pun.":
+    "Read straight from the blockchain, so every row has proof anyone can check.",
+  Semua: "All",
+  Saldo: "Balance",
+  Sewa: "Rent",
+  Jual: "Sell",
+  Transfer: "Transfers",
+  "Belum ada transaksi di kategori ini.": "No transactions in this category yet.",
+  "Isi saldo ": "Top up",
+  "Beli di pasar sekunder": "Bought on the secondary market",
+  "Sewa diambil": "Rent claimed",
+  "Pasang penawaran jual": "Listed units for sale",
+  "Unit terjual": "Units sold",
+  "Kirim unit": "Sent units",
+  "Terima unit": "Received units",
+  "{n} unit @ {price}": "{n} units @ {price}",
+  "{n} unit": "{n} units",
+  Panduan: "Guides",
+  "Cara mengecek dompet dan transaksimu": "How to check your wallet and transactions",
+  "1. Salin alamat dompetmu di atas.": "1. Copy your wallet address above.",
+  "2. Buka": "2. Open the",
+  "explorer Robinhood Chain": "Robinhood Chain explorer",
+  "dan tempel alamat itu di kolom pencarian.": "and paste the address into the search box.",
+  "3. Tab Transactions menampilkan semua transaksi; Token transfers menampilkan unit properti dan saldo Rupiah uji yang masuk atau keluar.":
+    "3. The Transactions tab lists every transaction; Token transfers shows property units and test Rupiah moving in or out.",
+  "Tentang jaringannya:": "About the network:",
+  "dokumentasi Robinhood Chain": "Robinhood Chain documentation",
+  "Cara mengambil sewa": "How to claim rent",
+  "Buka Portofolio, buka kartu properti yang kamu miliki, lalu tekan Ambil sewa. Sewa masuk ke saldo Rupiah-mu dan tercatat di riwayat dengan link bukti.":
+    "Open Portfolio, open a property card you own, then tap Claim rent. The rent goes to your Rupiah balance and shows up in your history with a proof link.",
+  "Buka Portofolio": "Open Portfolio",
+  "Cara menjual unit": "How to sell units",
+  "Di kartu properti pada Portofolio, isi jumlah unit dan harga di bagian Jual unit. Penawaranmu muncul di pasar sekunder, dan unit tetap menghasilkan sewa sampai ada yang membeli.":
+    "On the property card in Portfolio, enter units and a price under Sell units. Your listing appears on the secondary market and the units keep earning rent until someone buys them.",
+  "Cara menarik saldo ke Rupiah (versi produksi)": "How to withdraw to Rupiah (production version)",
+  "Di demo, saldo adalah Rupiah uji dan tidak bisa ditarik. Di versi produksi, isi saldo dan penarikan berjalan lewat penyedia jasa pembayaran berlisensi Bank Indonesia (misalnya QRIS atau virtual account) ke rekening banknya atas namamu.":
+    "In the demo the balance is test Rupiah and cannot be withdrawn. In production, top-ups and withdrawals run through a Bank Indonesia-licensed payment provider (for example QRIS or a virtual account) to a bank account in your name.",
+  "Referensi:": "References:",
+  "Keamanan dompet": "Wallet security",
+  "Dompetmu dibuat dan dilindungi oleh Privy. URSSET tidak menyimpan kuncinya. Kamu bisa mengekspornya kapan saja dari bagian Dompet kamu untuk dipakai di aplikasi dompet lain.":
+    "Your wallet is created and protected by Privy. URSSET does not store its key. You can export it any time from the Your wallet section to use in another wallet app.",
+  "Dokumentasi Privy": "Privy documentation",
+};

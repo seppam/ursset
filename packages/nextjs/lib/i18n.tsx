@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { enOwner } from "./i18n-owner";
 import { enPortfolio } from "./i18n-portfolio";
+import { enProfile } from "./i18n-profile";
 
 export type Lang = "id" | "en";
 
@@ -248,7 +249,7 @@ const en: Record<string, string> = {
 };
 
 // Area-specific dictionaries live in their own files so several people can add strings without conflicts.
-const dictionary: Record<string, string> = { ...en, ...enPortfolio, ...enOwner };
+const dictionary: Record<string, string> = { ...en, ...enPortfolio, ...enOwner, ...enProfile };
 
 type Vars = Record<string, string | number>;
 type Ctx = { lang: Lang; setLang: (l: Lang) => void; t: (text: string, vars?: Vars) => string };

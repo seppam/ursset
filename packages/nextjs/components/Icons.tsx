@@ -53,3 +53,13 @@ export const UsersIcon = ({ size = 22, className }: P) =>
       <path d="M3.5 19c.5-3 2.6-4.5 5.5-4.5s5 1.5 5.5 4.5M16 6.5a3 3 0 0 1 0 5.5M17.5 14.7c1.7.5 2.7 1.8 3 4.3" />
     </>,
   );
+
+export const UserIcon = ({ size = 22, className }: P) =>
+  base(
+    size,
+    className,
+    <>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
+    </>,
+  );

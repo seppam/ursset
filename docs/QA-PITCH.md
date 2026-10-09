@@ -68,3 +68,9 @@ ID: Pilot satu kos nyata, Sandbox OJK, mitra pembayaran dan KYC berlisensi, pemi
 Market size, expected yield, user counts, investor demand. If asked: "We have no real users yet; the demo is on testnet. TODO: replace with interview/waitlist figures if collected."
 
 ID: Kami belum punya pengguna nyata; demo ada di testnet.
+
+## Can a property owner buy their own units?
+
+**EN:** Technically yes: any verified wallet can buy units, including the owner's, because the contracts only check KYC and payment, not who the buyer is. In the business model that is acceptable and even healthy when it is disclosed, because it is the owner keeping "skin in the game" in their own property. The risk is wash buying that inflates the funding progress bar. Our planned safeguards (not built in the hackathon): show the owner's holding on the property page, cap the owner's share of the raise, lock owner units for a period, and count only third-party funds toward a funding target. The listing fee is charged on funds raised from third parties.
+
+**ID:** Secara teknis bisa: wallet terverifikasi mana pun boleh membeli unit, termasuk pemiliknya, karena kontrak hanya memeriksa KYC dan pembayaran. Untuk model bisnis, itu wajar dan justru sehat bila diungkapkan, karena pemilik ikut menanggung risiko (skin in the game). Risikonya adalah pembelian semu yang menggelembungkan progres pendanaan. Pengaman yang direncanakan (belum dibangun di hackathon): tampilkan kepemilikan pemilik di halaman properti, batasi porsi pemilik, kunci unit pemilik untuk jangka waktu tertentu, dan hitung hanya dana pihak ketiga untuk target pendanaan. Biaya listing dihitung dari dana yang terkumpul dari pihak ketiga.
