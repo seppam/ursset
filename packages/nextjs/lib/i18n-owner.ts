@@ -114,6 +114,14 @@ export const ownerEn: Record<string, string> = {
   "Memproses…": "Processing…",
   "Setor {amount}": "Deposit {amount}",
   "Sewa {amount} dibagikan.": "Rent of {amount} was paid out.",
+  // API guardrails (server error messages)
+  "Sewa per unit terlalu besar: maksimal 5% dari harga unit per setoran":
+    "Rent per unit is too high: at most 5% of the unit price per deposit",
+  "Nominal sewa harus bilangan bulat lebih dari 0": "The rent amount must be a whole number greater than 0",
+  "Terlalu banyak percobaan kode salah, coba lagi nanti": "Too many wrong code attempts, try again later",
+  "Terlalu banyak permintaan, coba lagi nanti": "Too many requests, try again later",
+  "Batas isi saldo harian tercapai (Rp2.000.000 per hari)": "Daily top-up limit reached (Rp2,000,000 per day)",
+  "Gas gratis sedang habis untuk jam ini, coba lagi nanti": "Free gas is used up for this hour, try again later",
 };
 
 // i18n.tsx merges this dictionary under this name.

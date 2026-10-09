@@ -1,6 +1,18 @@
 import { robinhoodTestnet } from "../chain";
 import { factory, idr, kyc } from "../contracts";
 import { abis } from "../generated/ursset";
+import { maxRentPerUnit } from "../rentLimits";
+import { HttpError } from "./errors";
+import {
+  assertNotLocked,
+  claimDrip,
+  clientIp,
+  rateLimit,
+  recordFailure,
+  recordSuccess,
+  releaseDrip,
+  safeEqual,
+} from "./guard";
 import { PrivyClient } from "@privy-io/server-auth";
 import "server-only";
 import {
@@ -27,14 +39,7 @@ function operatorAccount() {
   return privateKeyToAccount((raw.startsWith("0x") ? raw : `0x${raw}`) as `0x${string}`);
 }
 
-export class HttpError extends Error {
-  constructor(
-    public status: number,
-    message: string,
-  ) {
-    super(message);
-  }
-}
+export { HttpError };
 
 export const publicClient = createPublicClient({ chain: robinhoodTestnet, transport: http(SERVER_RPC) });
 
@@ -71,7 +76,7 @@ async function mined(send: () => Promise<`0x${string}`>) {
 let privy: PrivyClient | null = null;
 
 /** Checks the Privy access token and that the wallet really belongs to that signed-in user. */
-export async function requireOwner(req: Request, address: unknown): Promise<`0x${string}`> {
+export async function requireUser(req: Request, address: unknown): Promise<{ address: `0x${string}`; userId: string }> {
   if (typeof address !== "string" || !isAddress(address)) throw new HttpError(400, "Alamat tidak valid");
   const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
   const secret = process.env.PRIVY_APP_SECRET;
@@ -88,19 +93,46 @@ export async function requireOwner(req: Request, address: unknown): Promise<`0x$
     a => a.type === "wallet" && "address" in a && a.address.toLowerCase() === address.toLowerCase(),
   );
   if (!owns) throw new HttpError(403, "Wallet bukan milik akun ini");
-  return getAddress(address);
+  return { address: getAddress(address), userId: claims.userId };
 }
 
-/** The operator code protects the owner-only actions (deposit rent, list a property, upload photos). */
-export function requireOperatorCode(code: unknown) {
+export async function requireOwner(req: Request, address: unknown): Promise<`0x${string}`> {
+  return (await requireUser(req, address)).address;
+}
+
+/**
+ * The operator code protects the owner-only actions (deposit rent, list a property, upload photos).
+ * Compared in constant time, with a per-IP lockout after repeated failures.
+ */
+export async function requireOperatorCode(req: Request, code: unknown) {
+  const ip = clientIp(req);
+  assertNotLocked(ip);
   const expected = process.env.OPERATOR_PASSCODE;
-  if (!expected || code !== expected) throw new HttpError(401, "Kode operator salah");
+  if (!expected || typeof code !== "string" || !safeEqual(code, expected)) {
+    await recordFailure(ip);
+    throw new HttpError(401, "Kode operator salah");
+  }
+  recordSuccess(ip);
 }
 
-export async function dripGas(to: `0x${string}`) {
+const MAX_DRIPS_PER_HOUR = Number(process.env.MAX_DRIPS_PER_HOUR || 20);
+
+/**
+ * Sends the starter gas to a wallet. Limits: one drip per Privy user (durable when Blob is configured), a rate
+ * limit per IP, a cap on drips per hour, and no drip if the wallet already holds enough gas.
+ */
+export async function dripGas(req: Request, userId: string, to: `0x${string}`) {
+  rateLimit(`drip-ip:${clientIp(req)}`, 5, 10 * 60_000);
   const balance = await publicClient.getBalance({ address: to });
   if (balance >= MIN_GAS) return null;
-  return (await mined(() => walletClient().sendTransaction({ to, value: GAS_DRIP }))).hash;
+  if (!(await claimDrip(userId))) return null;
+  try {
+    rateLimit("drip-total", MAX_DRIPS_PER_HOUR, 3600_000, "Gas gratis sedang habis untuk jam ini, coba lagi nanti");
+    return (await mined(() => walletClient().sendTransaction({ to, value: GAS_DRIP }))).hash;
+  } catch (e) {
+    releaseDrip(userId);
+    throw e;
+  }
 }
 
 export async function verifyWallet(to: `0x${string}`) {
@@ -129,8 +161,25 @@ export async function getProperty(id: number) {
   return { token, sale, distributor };
 }
 
+/**
+ * Guardrail: one deposit may not pay more than RENT_MAX_PCT_OF_UNIT_PRICE of the unit price per unit, so a typo
+ * or a leaked code cannot push the operator's whole tIDR balance to holders at once.
+ */
+async function assertRentWithinLimit(sale: `0x${string}`, distributor: `0x${string}`, amount: bigint) {
+  const [unitPrice, units] = await Promise.all([
+    publicClient.readContract({ address: sale, abi: abis.PrimarySale, functionName: "unitPrice" }),
+    publicClient.readContract({ address: distributor, abi: abis.RentDistributor, functionName: "circulating" }),
+  ]);
+  if (units === 0n)
+    throw new HttpError(400, "Belum ada unit terjual di properti ini, jadi belum ada yang bisa menerima sewa.");
+  if (amount > units * BigInt(maxRentPerUnit(Number(unitPrice))))
+    throw new HttpError(400, "Sewa per unit terlalu besar: maksimal 5% dari harga unit per setoran");
+}
+
 export async function depositRent(propertyId: number, amount: bigint) {
-  const { distributor } = await getProperty(propertyId);
+  if (amount < 1n) throw new HttpError(400, "Nominal sewa harus bilangan bulat lebih dari 0");
+  const { sale, distributor } = await getProperty(propertyId);
+  await assertRentWithinLimit(sale, distributor, amount);
   const owner = operatorAccount().address;
   // The distributor pulls tIDR from the operator like any ERC-20 spender, so approve it once per property.
   const allowance = await publicClient.readContract({ ...idr, functionName: "allowance", args: [owner, distributor] });
