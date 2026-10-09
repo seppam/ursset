@@ -3,230 +3,16 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePrivy } from "@privy-io/react-auth";
-import { isAddress } from "viem";
-import { useReadContract, useReadContracts } from "wagmi";
+import { useReadContracts } from "wagmi";
 import { ChartIcon, CoinIcon, SwapIcon } from "~~/components/Icons";
-import { IntInput } from "~~/components/IntInput";
 import { PropertyCard, PropertyCardSkeleton } from "~~/components/PropertyCard";
-import { txUrl } from "~~/lib/chain";
-import { friendlyError, num, rp, short } from "~~/lib/format";
-import { abis } from "~~/lib/generated/ursset";
-import { useMe, usePropMe, useSaleInfo, useSend } from "~~/lib/hooks";
+import { ConnectedPropertyCard } from "~~/components/portfolio/ConnectedPropertyCard";
+import { PortfolioSummary } from "~~/components/portfolio/PortfolioSummary";
+import { contractsFor } from "~~/lib/contracts";
+import { rp } from "~~/lib/format";
+import { useMe } from "~~/lib/hooks";
 import { useT } from "~~/lib/i18n";
-import { PropertyProvider, useProp, useProperties } from "~~/lib/properties";
-
-type Section = "claim" | "sell" | "market" | "send";
-type Notice = { tone: "ok" | "bad"; text: string; hash?: string; where: Section };
-
-const sectionOf = (key: string): Section => (key === "claim" || key === "sell" || key === "send" ? key : "market");
-const input = "mt-1 min-h-[44px] w-full rounded-lg border border-line px-3 py-2 text-sm text-ink";
-
-function PropertyPortfolio() {
-  const t = useT();
-  const { c, name, info } = useProp();
-  const me = useMe();
-  const mine = usePropMe();
-  const sale = useSaleInfo();
-  const send = useSend();
-  const price = sale.unitPrice ?? 10_000n;
-
-  const [notice, setNotice] = useState<Notice | null>(null);
-  const [busy, setBusy] = useState("");
-  const [sellUnits, setSellUnits] = useState(1);
-  const [sellPrice, setSellPrice] = useState(10_000);
-  const [to, setTo] = useState("");
-  const [sendUnits, setSendUnits] = useState(1);
-
-  const { data: count } = useReadContract({
-    ...c.market,
-    functionName: "listingCount",
-    query: { refetchInterval: 5000 },
-  });
-  const ids = Array.from({ length: Math.min(Number(count ?? 0n), 20) }, (_, i) => BigInt(i + 1));
-  const { data: listings, refetch: refetchListings } = useReadContracts({
-    allowFailure: false,
-    contracts: ids.map(id => ({ ...c.market, functionName: "listings", args: [id] }) as const),
-    query: { enabled: ids.length > 0, refetchInterval: 5000 },
-  });
-  const active = (listings ?? [])
-    .map((l, i) => ({ id: ids[i], seller: l[0], units: l[1], unitPrice: l[2], active: l[3] }))
-    .filter(l => l.active);
-
-  // Shows the result inside the card the user just acted on, so it is easy to notice.
-  function renderNotice(where: Section) {
-    if (!notice || notice.where !== where) return null;
-    return (
-      <div
-        className={`mt-3 rounded-xl p-3 text-sm ${notice.tone === "ok" ? "bg-brand-soft text-brand-dark" : "bg-red-50 text-red-700"}`}
-      >
-        {notice.text}{" "}
-        {notice.hash && (
-          <a className="font-semibold underline" href={txUrl(notice.hash)} target="_blank" rel="noreferrer">
-            {t("Lihat bukti di blockchain")}
-          </a>
-        )}
-      </div>
-    );
-  }
-
-  async function run(key: string, ok: string, fn: () => Promise<{ hash: string } | void>) {
-    const where = sectionOf(key);
-    setBusy(key);
-    setNotice(null);
-    try {
-      const res = await fn();
-      setNotice({ tone: "ok", text: t(ok), hash: res?.hash, where });
-      me.refetch();
-      mine.refetch();
-      void refetchListings();
-    } catch (e) {
-      setNotice({ tone: "bad", text: t(friendlyError(e)), where });
-    } finally {
-      setBusy("");
-    }
-  }
-
-  return (
-    <div className="space-y-3">
-      <section className="card p-5">
-        <Link href={`/p/${info.id}`} className="text-sm font-semibold text-brand underline">
-          {name}
-        </Link>
-        <p className="text-3xl font-black">{rp(mine.units * price)}</p>
-        <p className="text-sm text-muted">
-          {t("{n} unit · saldo {balance}", { n: num(mine.units), balance: rp(me.idr) })}
-        </p>
-      </section>
-
-      <section className="card p-5">
-        <h2 className="font-extrabold">{t("Sewa yang masuk")}</h2>
-        <p className="text-2xl font-black text-brand-dark">{rp(mine.pendingRent)}</p>
-        <p className="text-xs text-muted">{t("Dibagi proporsional dari setoran sewa yang tercatat onchain.")}</p>
-        <button
-          className="btn-main mt-3"
-          disabled={mine.pendingRent === 0n || busy === "claim"}
-          onClick={() =>
-            run("claim", "Sewa masuk ke saldomu.", () => send({ ...c.distributor, functionName: "claim" }))
-          }
-        >
-          {busy === "claim" ? t("Memproses…") : t("Ambil sewa")}
-        </button>
-        {renderNotice("claim")}
-      </section>
-
-      <section className="card p-5">
-        <h2 className="font-extrabold">{t("Jual unit")}</h2>
-        <p className="text-sm text-muted">{t("Pasang harga, investor terverifikasi lain bisa membeli kapan saja.")}</p>
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <label className="text-xs font-semibold text-muted">
-            {t("Jumlah unit")}
-            <IntInput className={input} value={sellUnits} onChange={setSellUnits} />
-          </label>
-          <label className="text-xs font-semibold text-muted">
-            {t("Harga per unit (Rp)")}
-            <IntInput className={input} value={sellPrice} onChange={setSellPrice} />
-          </label>
-        </div>
-        <button
-          className="btn-main mt-3"
-          disabled={busy === "sell" || sellUnits < 1 || sellPrice < 1 || BigInt(sellUnits) > mine.units}
-          onClick={() =>
-            run("sell", "Penawaran dipasang.", async () => {
-              await send({ ...c.token, functionName: "approve", args: [c.market.address, BigInt(sellUnits)] });
-              return send({ ...c.market, functionName: "list", args: [BigInt(sellUnits), BigInt(sellPrice)] });
-            })
-          }
-        >
-          {busy === "sell" ? t("Memproses…") : t("Jual {n} unit di {price}", { n: sellUnits, price: rp(sellPrice) })}
-        </button>
-        {renderNotice("sell")}
-      </section>
-
-      <section className="card p-5">
-        <h2 className="font-extrabold">{t("Pasar sekunder")}</h2>
-        {active.length === 0 && <p className="mt-1 text-sm text-muted">{t("Belum ada penawaran aktif.")}</p>}
-        <ul className="mt-2 divide-y divide-line">
-          {active.map(l => {
-            const own = l.seller.toLowerCase() === me.address?.toLowerCase();
-            return (
-              <li key={String(l.id)} className="flex items-center justify-between gap-3 py-3 text-sm">
-                <span>
-                  <b>{num(l.units)} unit</b> @ {rp(l.unitPrice)}
-                  <br />
-                  <span className="text-xs text-muted">
-                    {t("dari {who} · total {total}", {
-                      who: own ? t("kamu") : short(l.seller),
-                      total: rp(l.units * l.unitPrice),
-                    })}
-                  </span>
-                </span>
-                {own ? (
-                  <button
-                    className="btn-ghost"
-                    disabled={busy === `c${l.id}`}
-                    onClick={() =>
-                      run(`c${l.id}`, "Penawaran dibatalkan.", () =>
-                        send({ ...c.market, functionName: "cancel", args: [l.id] }),
-                      )
-                    }
-                  >
-                    {t("Batal")}
-                  </button>
-                ) : (
-                  <button
-                    className="btn-ghost"
-                    disabled={busy === `b${l.id}` || me.idr < l.units * l.unitPrice}
-                    onClick={() =>
-                      run(`b${l.id}`, "Unit berpindah ke kamu.", () =>
-                        send({ ...c.market, functionName: "buy", args: [l.id] }),
-                      )
-                    }
-                  >
-                    {t("Beli")}
-                  </button>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-        {renderNotice("market")}
-      </section>
-
-      <section className="card p-5">
-        <h2 className="font-extrabold">{t("Kirim unit ke wallet lain")}</h2>
-        <p className="text-sm text-muted">
-          {t("Coba kirim ke alamat yang belum terverifikasi: smart contract akan menolaknya.")}
-        </p>
-        <input
-          className="mt-3 w-full rounded-lg border border-line px-3 py-2 font-mono text-xs"
-          placeholder={t("0x… alamat tujuan")}
-          value={to}
-          onChange={e => setTo(e.target.value.trim())}
-        />
-        <div className="mt-2 flex gap-2">
-          <IntInput
-            className="w-24 rounded-lg border border-line px-3 py-2 text-sm"
-            value={sendUnits}
-            onChange={setSendUnits}
-            aria-label={t("Jumlah unit")}
-          />
-          <button
-            className="btn-main"
-            disabled={busy === "send" || !isAddress(to) || sendUnits < 1}
-            onClick={() =>
-              run("send", "Unit terkirim.", () =>
-                send({ ...c.token, functionName: "transfer", args: [to, BigInt(sendUnits)] }),
-              )
-            }
-          >
-            {busy === "send" ? t("Memproses…") : t("Kirim")}
-          </button>
-        </div>
-        {renderNotice("send")}
-      </section>
-    </div>
-  );
-}
+import { PropertyProvider, useProperties } from "~~/lib/properties";
 
 export default function Portfolio() {
   const t = useT();
@@ -234,14 +20,21 @@ export default function Portfolio() {
   const me = useMe();
   const { data: properties, isLoading } = useProperties();
 
-  // Which properties does this investor hold units in? That decides the two sections below.
-  const balances = useReadContracts({
+  // One batched read for every property: units held, rent waiting and unit price.
+  // It decides which section a property is in, the top summary and which card starts open.
+  const stats = useReadContracts({
     allowFailure: false,
-    contracts: (properties ?? []).map(
-      p => ({ address: p.token, abi: abis.PropertyToken, functionName: "balanceOf", args: [me.address!] }) as const,
-    ),
+    contracts: (properties ?? []).flatMap(p => {
+      const c = contractsFor(p);
+      return [
+        { ...c.token, functionName: "balanceOf", args: [me.address!] },
+        { ...c.distributor, functionName: "pending", args: [me.address!] },
+        { ...c.sale, functionName: "unitPrice" },
+      ] as const;
+    }),
     query: { enabled: !!me.address && !!properties?.length, refetchInterval: 5000 },
   });
+  const [toggled, setToggled] = useState<Record<number, boolean>>({});
 
   if (!authenticated) {
     return (
@@ -258,9 +51,19 @@ export default function Portfolio() {
     );
   }
 
-  const ready = !!properties && !!balances.data;
-  const owned = (properties ?? []).filter((_, i) => (balances.data?.[i] ?? 0n) > 0n);
-  const others = (properties ?? []).filter((_, i) => (balances.data?.[i] ?? 0n) === 0n);
+  const ready = !!properties && !!stats.data;
+  const rows = (properties ?? []).map((info, i) => {
+    const units = (stats.data?.[i * 3] as bigint | undefined) ?? 0n;
+    const pending = (stats.data?.[i * 3 + 1] as bigint | undefined) ?? 0n;
+    const price = (stats.data?.[i * 3 + 2] as bigint | undefined) ?? 10_000n;
+    return { info, units, pending, value: units * price };
+  });
+  const owned = rows.filter(r => r.units > 0n);
+  const others = rows.filter(r => r.units === 0n).map(r => r.info);
+  const totalValue = owned.reduce((sum, r) => sum + r.value, 0n);
+  const totalPending = owned.reduce((sum, r) => sum + r.pending, 0n);
+  // Start with one card open: the only one, else the first with rent waiting, else the first.
+  const defaultId = (owned.find(r => r.pending > 0n) ?? owned[0])?.info.id;
 
   return (
     <div className="space-y-5">
@@ -298,6 +101,10 @@ export default function Portfolio() {
 
       {ready && (
         <>
+          {owned.length > 0 && (
+            <PortfolioSummary totalValue={totalValue} totalPending={totalPending} count={owned.length} />
+          )}
+
           <section id="properti-kamu" className="scroll-mt-20 space-y-3">
             <h2 className="px-1 text-lg font-extrabold">{t("Properti kamu")}</h2>
             {owned.length === 0 && (
@@ -308,10 +115,15 @@ export default function Portfolio() {
                 </p>
               </div>
             )}
-            <div className="grid gap-4 md:grid-cols-2 md:items-start">
-              {owned.map(p => (
-                <PropertyProvider key={p.id} info={p}>
-                  <PropertyPortfolio />
+            <div className="mx-auto max-w-3xl space-y-5">
+              {owned.map(({ info }) => (
+                <PropertyProvider key={info.id} info={info}>
+                  <ConnectedPropertyCard
+                    open={toggled[info.id] ?? info.id === defaultId}
+                    onToggle={() =>
+                      setToggled(prev => ({ ...prev, [info.id]: !(prev[info.id] ?? info.id === defaultId) }))
+                    }
+                  />
                 </PropertyProvider>
               ))}
             </div>
