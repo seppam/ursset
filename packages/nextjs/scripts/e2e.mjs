@@ -1,5 +1,5 @@
 // Smoke test against the deployed contracts: two throwaway investors run the whole product flow.
-// Usage (from packages/nextjs): node scripts/e2e.mjs
+// Usage (from packages/nextjs): node scripts/e2e.mjs   (PROPERTY_ID=1 to pick another listed property)
 import { readFileSync } from "fs";
 import { createPublicClient, createWalletClient, defineChain, http, parseEther, formatEther, decodeEventLog } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
@@ -7,7 +7,7 @@ import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 const load = p => JSON.parse(readFileSync(new URL(p, import.meta.url), "utf8"));
 const env = Object.fromEntries(readFileSync(new URL("../../foundry/.env", import.meta.url), "utf8").split("\n").filter(l => l.includes("=") && !l.startsWith("#")).map(l => [l.split("=")[0], l.slice(l.indexOf("=") + 1)]));
 const gen = readFileSync(new URL("../lib/generated/ursset.ts", import.meta.url), "utf8");
-const addresses = JSON.parse(gen.match(/"addresses": (\{[^}]+\})/)[1]);
+const addresses = Object.fromEntries([...gen.slice(0, gen.indexOf("export const abis")).matchAll(/"?(\w+)"?:\s*"(0x[0-9a-fA-F]{40})"/g)].map(m => [m[1], m[2]]));
 const abi = n => load(`../../foundry/out/${n}.sol/${n}.json`).abi;
 
 const rpc = "https://rpc.testnet.chain.robinhood.com";
@@ -16,13 +16,17 @@ const pub = createPublicClient({ chain, transport: http(rpc) });
 const operator = privateKeyToAccount(`0x${env.DEPLOYER_PRIVATE_KEY.replace(/^0x/, "")}`);
 const wallet = acc => createWalletClient({ account: acc, chain, transport: http(rpc) });
 
+const factory = { address: addresses.PropertyFactory, abi: abi("PropertyFactory") };
+const propertyId = BigInt(process.env.PROPERTY_ID ?? 0);
+const [tokenAddr, saleAddr, distAddr, marketAddr] = await pub.readContract({ ...factory, functionName: "properties", args: [propertyId] });
+
 const c = {
   kyc: { address: addresses.KYCRegistry, abi: abi("KYCRegistry") },
   idr: { address: addresses.MockIDR, abi: abi("MockIDR") },
-  token: { address: addresses.PropertyToken, abi: abi("PropertyToken") },
-  dist: { address: addresses.RentDistributor, abi: abi("RentDistributor") },
-  sale: { address: addresses.PrimarySale, abi: abi("PrimarySale") },
-  market: { address: addresses.Marketplace, abi: abi("Marketplace") },
+  token: { address: tokenAddr, abi: abi("PropertyToken") },
+  dist: { address: distAddr, abi: abi("RentDistributor") },
+  sale: { address: saleAddr, abi: abi("PrimarySale") },
+  market: { address: marketAddr, abi: abi("Marketplace") },
 };
 
 let spent = 0n;

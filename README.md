@@ -32,6 +32,8 @@ On top of that:
 - **Urunan Room.** Create a room with a target, share one link, and friends join with their own amounts. Everyone receives units in their own wallet; nobody holds anyone else's money.
 - **Public rent history.** Every rent deposit and its pro rata split is an onchain event anyone can check ("Lihat bukti di blockchain" on every transaction).
 - **Resale.** Sell units to other verified investors at a price you set.
+- **List any property in one transaction.** The operator form (`/operator`) takes a name, city, rooms, value, description and photos, then `PropertyFactory` deploys that property's token, sale, rent distributor and marketplace and wires them together. Photos go to Vercel Blob (or paste image links).
+- **Two languages.** The whole UI switches between Indonesian and English from the header (ID | EN).
 - **Compliance in code.** Units can only move between wallets verified in the `KYCRegistry`. A transfer to an unverified wallet is rejected by the smart contract, not by the app.
 
 ## Why onchain
@@ -58,6 +60,7 @@ Investor (Next.js app, Privy login)          Operator (server, Next.js API route
 
 | Contract | Role |
 | --- | --- |
+| `PropertyFactory` | Lists a property in one transaction: deploys and wires `PropertyToken`, `RentDistributor`, `PrimarySale` and `Marketplace`, verifies the sale contract and mints the unit inventory, then hands ownership to the operator. Only the operator can call it. |
 | `KYCRegistry` | Allow-list of verified wallets. Only an address and a boolean are stored, never personal data. |
 | `MockIDR` | Test Rupiah (tIDR, zero decimals). Simulates a balance topped up through a licensed payment provider. |
 | `PropertyToken` | ERC-20 units of one property (300,000 units). `_update` requires both sides to be verified. Stores the legal-document hash. |
@@ -65,7 +68,7 @@ Investor (Next.js app, Privy login)          Operator (server, Next.js API route
 | `PrimarySale` | Fixed-price primary sale (Rp10,000 per unit) and Urunan Rooms (target, progress, contributors). |
 | `Marketplace` | Non-custodial fixed-price resale. Units stay in the seller's wallet and keep earning rent until filled. |
 
-Contract addresses are written to [`packages/nextjs/lib/generated/ursset.ts`](packages/nextjs/lib/generated/ursset.ts) after each deploy. Current deployment: _TODO: list addresses with explorer links after the final deploy._
+The shared contracts (`KYCRegistry`, `MockIDR`, `PropertyFactory`) are written to [`packages/nextjs/lib/generated/ursset.ts`](packages/nextjs/lib/generated/ursset.ts) after each deploy. Each listed property's own contract addresses come from `PropertyFactory.properties(id)`. Current deployment: _TODO: list addresses with explorer links after the final deploy._
 
 ## Run it locally
 
@@ -73,7 +76,7 @@ Requirements: Node 20+, Yarn, [Foundry](https://book.getfoundry.sh/getting-start
 
 ```bash
 yarn install
-cd packages/foundry && forge test            # 18 tests
+cd packages/foundry && forge test            # 26 tests
 
 # Frontend
 cp packages/nextjs/.env.example packages/nextjs/.env.local   # then fill in the values
@@ -85,6 +88,7 @@ Deploy contracts to Robinhood Chain Testnet (needs testnet ETH from the [faucet]
 ```bash
 cd packages/foundry
 cp .env.example .env                         # add DEPLOYER_PRIVATE_KEY (testnet-only wallet)
+export METADATA_BASE=https://YOUR-APP.vercel.app   # where /properties/*.json for the two seed properties is hosted
 forge script script/Deploy.s.sol --rpc-url robinhood --private-key "$DEPLOYER_PRIVATE_KEY" --broadcast --ffi
 node scripts-js/exportUrsset.mjs 46630       # writes ABIs and addresses for the frontend
 ```
@@ -95,12 +99,15 @@ Smoke test the deployed contracts with two throwaway investors (onboarding, Urun
 cd packages/nextjs && node scripts/e2e.mjs
 ```
 
+Optional photo upload needs a Vercel Blob store: in the Vercel dashboard open Storage, create a Blob store and connect it to the project (this sets `BLOB_READ_WRITE_TOKEN`). Without it the operator form still works with pasted image links.
+
 The domain of Robinhood Chain's RPC is blocked by some Indonesian ISPs. If calls fail with a TLS error, switch your DNS to `1.1.1.1`, or set `NEXT_PUBLIC_RPC_URL` to this app's own `/api/rpc` proxy.
 
 ## Tests
 
 `packages/foundry/test/URSSET.t.sol` covers:
 
+- Factory: wiring, independent properties, operator-only listing, rent deposits after creation, role checks.
 - KYC: unverified buyers and receivers are rejected, revoked wallets cannot send.
 - Sale: payment and delivery, sold-out limit, Urunan Room progress and per-person ownership.
 - Rent: pro rata split, unsold inventory earns nothing, late buyers get no past rent, rent follows units after a transfer, only the operator can deposit.
