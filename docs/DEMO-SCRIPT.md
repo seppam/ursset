@@ -15,12 +15,12 @@ Record the deck from `docs/PITCH.md` (English version) with voice-over. Narratio
 | Slide | Time | Narration |
 |---|---|---|
 | 1 | 0:00-0:20 | "This is Rina, 24. She wants a share of a property, but her capital is small and crypto sounds complicated. URSSET, short for urunan asset, lets Rina and three friends pool money to buy part of a boarding house from Rp10,000 and receive its monthly rent. Three steps, no seed phrase." |
-| 2 | 0:20-0:45 | "Three barriers keep people out. Capital. Trust, because investors read rent reports they cannot check themselves. And complexity, because crypto products expect wallets and gas fees. [TODO: one sentence of real interview evidence, or cut.]" |
+| 2 | 0:20-0:45 | "Three barriers keep people out. Capital. Trust, because investors read rent reports they cannot check themselves. And complexity, because crypto products expect wallets and gas fees." |
 | 3 | 0:45-1:20 | "Sign in with email. Top up through QRIS. Tap Urunan. To pool money, create an Urunan Room, share one link, and each friend joins with their own amount. Units go straight to each person's wallet, so nobody holds anyone else's money. Every rent deposit leaves public proof anyone can open." |
 | 4 | 1:20-1:50 | "Ownership, rent payouts and trades between investors happen on a public ledger the operator does not control, so investors can verify for themselves without trusting a database, while KYC rules are enforced directly by the smart contract. A transfer to an unverified wallet is rejected by the contract itself." |
 | 5 | 1:50-2:05 | "The property owner pays a listing fee, about 3 percent of funds raised. That is an assumption we still need to validate with owners. Investors pay no platform fee." |
 | 6 | 2:05-2:30 | "We do not claim to be compliant. The limit: tokens representing rights to property rent may be treated as financial products supervised by OJK, and payments in Indonesia must be in Rupiah. The path: the OJK Regulatory Sandbox, with the property held by a legal-entity SPV and Rupiah through a BI-licensed payment provider. For the hackathon: testnet, non-custodial, illustrative property data, no real user funds." |
-| 7 | 2:30-3:00 | "What exists is a product: seven contracts, 45 passing tests, and a live app. Market traction: [TODO: real numbers, or state that there are none yet]. Next: a pilot with one real boarding house, the sandbox application, and a licensed payment partner. Try it at ursset.vercel.app. Thank you." |
+| 7 | 2:30-3:00 | "What exists is a product: seven contracts, 45 passing tests, and a live app. Market traction: we have no real users yet; this is a testnet demo. Next: a pilot with one real boarding house, the sandbox application, and a licensed payment partner. Try it at ursset.vercel.app. Thank you." |
 
 Captions: one line per slide using the slide title. Show the URL on slide 7.
 

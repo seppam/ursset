@@ -30,11 +30,11 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 - Properti butuh modal besar, anak muda terkunci di luar.
 - Di platform properti pecahan, investor biasanya harus percaya laporan sewa dari operator.
 - Produk berbasis kripto meminta orang awam paham wallet, gas, dan seed phrase.
-- TODO: hasil wawancara (jumlah responden dan satu kutipan nyata).
+- Belum ada wawancara pengguna; saat ini yang terbukti adalah produknya berjalan end to end di testnet.
 
-**Visual:** tiga ikon hambatan (modal, kepercayaan, kerumitan) dan kotak bertanda TODO untuk kutipan wawancara.
+**Visual:** tiga ikon hambatan (modal, kepercayaan, kerumitan) tanpa kutipan wawancara.
 
-**Catatan (25 dtk):** "Tiga hambatan. Pertama, modal. Kedua, kepercayaan: investor melihat laporan sewa tanpa bisa memeriksanya sendiri. Ketiga, kalau pakai kripto, orang harus mengurus wallet dan biaya gas. [TODO: hasil wawancara bila ada; bila belum, lewati kalimat ini.]"
+**Catatan (25 dtk):** "Tiga hambatan. Pertama, modal. Kedua, kepercayaan: investor melihat laporan sewa tanpa bisa memeriksanya sendiri. Ketiga, kalau pakai kripto, orang harus mengurus wallet dan biaya gas."
 
 ### Slide 3: Solusi (0:45-1:20)
 
@@ -98,13 +98,13 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 
 **Di slide**
 - Sudah dibangun: 7 kontrak, 45 tes Foundry lulus, skrip end-to-end di testnet, aplikasi hidup dua bahasa.
-- Traksi pasar: TODO waitlist (jumlah), TODO wawancara (jumlah), TODO pemilik kos pilot (status).
+- Traksi pasar: belum ada pengguna nyata; ini demo di testnet. Berikutnya: pilot dengan satu kos dan validasi pengguna.
 - Berikutnya: pilot satu kos nyata, aplikasi sandbox OJK, mitra pembayaran berlisensi, biaya pasar sekunder, banyak properti.
 - Ajakan: mentor regulasi dan pemilik kos.
 
-**Visual:** garis waktu tiga titik (sekarang, pilot, sandbox), kotak TODO traksi, QR ke ursset.vercel.app.
+**Visual:** garis waktu tiga titik (sekarang, pilot, sandbox), QR ke ursset.vercel.app.
 
-**Catatan (30 dtk):** "Yang ada bukan hanya slide: tujuh kontrak, 45 tes lulus, dan aplikasi yang bisa dicoba sekarang. Traksi pasar: [TODO data nyata, atau katakan jujur belum ada]. Berikutnya: pilot dengan satu kos nyata, sandbox OJK, mitra pembayaran. Saya mencari mentor regulasi dan pemilik kos. Terima kasih."
+**Catatan (30 dtk):** "Yang ada bukan hanya slide: tujuh kontrak, 45 tes lulus, dan aplikasi yang bisa dicoba sekarang. Traksi pasar: belum ada pengguna nyata; ini demo di testnet. Berikutnya: pilot dengan satu kos nyata, sandbox OJK, mitra pembayaran. Saya mencari mentor regulasi dan pemilik kos. Terima kasih."
 
 ### Slide cadangan: Arsitektur
 
@@ -159,11 +159,11 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 - Property needs large capital, so young Indonesians are locked out.
 - On fractional platforms, investors usually have to trust the operator's rent reports.
 - Crypto products ask ordinary people to manage wallets, gas and seed phrases.
-- TODO: interview evidence (number of respondents and one real quote).
+- No user interviews yet; what is proven today is a product that runs end to end on the testnet.
 
-**Visual:** three barrier icons (capital, trust, complexity) and a box marked TODO for an interview quote.
+**Visual:** three barrier icons (capital, trust, complexity) with no interview quote.
 
-**Speaker notes (25 s):** "Three barriers. First, capital. Second, trust: investors read rent reports they cannot check themselves. Third, crypto products expect wallets and gas fees. [TODO: interview findings if they exist; otherwise skip this sentence.]"
+**Speaker notes (25 s):** "Three barriers. First, capital. Second, trust: investors read rent reports they cannot check themselves. Third, crypto products expect wallets and gas fees."
 
 ### Slide 3: Solution (0:45-1:20)
 
@@ -227,13 +227,13 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 
 **On slide**
 - Built: 7 contracts, 45 passing Foundry tests (including invariant and fuzz tests), an end-to-end script on the testnet, a live app in two languages.
-- Market traction: TODO waitlist (count), TODO interviews (count), TODO pilot owner (status).
+- Market traction: no real users yet; this is a testnet demo. Next: a pilot with one boarding house and user validation.
 - Next: pilot with one real boarding house, OJK sandbox application, licensed payment partner, secondary-market fees, more properties.
 - Ask: regulatory mentors and boarding-house owners.
 
-**Visual:** three-point timeline (now, pilot, sandbox), TODO traction box, QR code to ursset.vercel.app.
+**Visual:** three-point timeline (now, pilot, sandbox), QR code to ursset.vercel.app.
 
-**Speaker notes (30 s):** "What exists is a product: seven contracts, 45 passing tests, and a live app you can try now. Market traction: [TODO real numbers, or say plainly that there are none yet]. Next: a pilot with one real boarding house, the sandbox application, and a licensed payment partner. I am looking for regulatory mentors and boarding-house owners. Thank you."
+**Speaker notes (30 s):** "What exists is a product: seven contracts, 45 passing tests, and a live app you can try now. Market traction: we have no real users yet; this is a testnet demo. Next: a pilot with one real boarding house, the sandbox application, and a licensed payment partner. I am looking for regulatory mentors and boarding-house owners. Thank you."
 
 ### Backup slide: Architecture
 

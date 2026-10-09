@@ -65,7 +65,7 @@ ID: Pilot satu kos nyata, Sandbox OJK, mitra pembayaran dan KYC berlisensi, pemi
 ---
 
 ## Questions to avoid answering with numbers
-Market size, expected yield, user counts, investor demand. If asked: "We have no real users yet; the demo is on testnet. TODO: replace with interview/waitlist figures if collected."
+Market size, expected yield, user counts, investor demand. If asked: "We have no real users yet; the demo is on testnet."
 
 ID: Kami belum punya pengguna nyata; demo ada di testnet.
 
