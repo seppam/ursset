@@ -6,9 +6,9 @@ Ethereum Jakarta Hackathon 2026, theme: Real-World Assets. Deadline: Sat 10 Oct 
 URSSET
 
 ## Tagline
-Urunan asset: pool money with friends, own part of a rental property, collect verifiable rent.
+Urunan asset: pool money with friends, own part of a rental property, collect rent with publicly checkable deposits.
 
-## Short description (about 250 characters)
+## Short description (limit assumed 250 characters; this text is 245, recount if HackQuest shows a lower limit)
 URSSET lets young Indonesians co-own a boarding house from Rp10,000. Sign in with email, top up, tap once. Rent deposits and payouts are public onchain, and KYC is enforced by the smart contracts. Testnet demo on Robinhood Chain, an Ethereum L2.
 
 ## Long description
@@ -16,11 +16,13 @@ URSSET ("urunan asset", Indonesian for "pooled asset") is a fractional rental-pr
 
 The user experience hides the blockchain: sign in with email or Google (Privy embedded wallet, no seed phrase, gas covered by the app), top up simulated test Rupiah via QRIS plus a light identity check, then tap "Urunan". Friends can pool through an **Urunan Room**: one shared link and target, each person joins with their own amount, and units land in each person's own wallet, so nobody holds anyone else's money.
 
-What stays verifiable onchain: ownership, every rent deposit and its pro rata split, and resale trades. Every transaction in the app links to "Lihat bukti di blockchain". Compliance is part of the contracts: `PropertyToken` only moves between wallets verified in `KYCRegistry`, so a transfer to an unverified wallet is rejected by the contract itself.
+What stays verifiable onchain: ownership, every rent deposit and its pro rata split, and resale trades. Rent deposits and their split can be checked; whether the rooms are really rented still depends on the operator/SPV and on audits, which is a risk we acknowledge. Every transaction in the app links to "Lihat bukti di blockchain". Allow-list enforcement is part of the contracts (this is not a claim of regulatory compliance): `PropertyToken` only moves between wallets verified in `KYCRegistry`, so a transfer to an unverified wallet is rejected by the contract itself.
 
 Property owners get an operator area to list a property (name, city, rooms, occupancy, value, photos) in one transaction through `PropertyFactory`, and to deposit monthly rent. The UI is mobile-first and available in Indonesian and English.
 
-This is a hackathon demo: testnet only, illustrative property data, simulated QRIS and KYC, no real funds, no investment offer.
+Units can be sold to verified investors through the marketplace; liquidity is not guaranteed.
+
+**Disclaimer:** This is a hackathon demo: testnet only, illustrative property data, simulated QRIS and KYC, no real funds. No returns promised, not an investment offer.
 
 ## Problem
 - Property needs large capital, so most young Indonesians are locked out.
@@ -35,16 +37,18 @@ Why onchain: Ownership, rent payouts and trades between investors happen on a pu
 ## RWA use case
 Rental real estate (boarding houses, "kos") in Indonesia. Units represent economic rights to rent from a property. In production the property would be held by a legal-entity SPV and investors would hold rights to rent, not the land certificate; the token stores a hash of the legal documents. Seed properties in the demo (Kos Melati Depok, Kos Dago Asri Bandung) are illustrative.
 
+Further notes, not settled: rent is likely subject to income tax and/or VAT; the legal standing of rent rights held in an SPV needs a clear legal structure; crypto-asset oversight in Indonesia has moved to OJK, so the rules may change. We have no legal or tax advice yet.
+
 Regulatory stance. Limit: tokens representing rights to property rent may be treated as financial products supervised by OJK, and payments in Indonesia must be in Rupiah. Path: we pursue the OJK Regulatory Sandbox, like earlier property tokenization precedents, with the property held by a legal-entity SPV and Rupiah in and out through a BI-licensed payment provider. Now: for the hackathon, testnet, non-custodial, illustrative property data, no real user funds.
 
-## Business model (assumption to validate)
-Listing fee from the property owner, about 3% of funds raised. Investors pay no platform fee. A secondary-market fee is a later phase.
+## Business model (assumption, not validated, not implemented in the contracts)
+Listing fee from the property owner, about 3% of funds raised. Illustration only: Rp500 million raised would mean Rp15 million per listing, paid once. Investors pay no platform fee. Recurring revenue (secondary-market fees, rent management) is a later phase. We have no revenue and have not validated the 3% with owners.
 
 ## Competitive context
-GORO (OJK Regulatory Sandbox graduate, Nov 2025) proves demand for fractional property from Rp10,000 with monthly rent and resale in Indonesia, and we respect that work. URSSET differs by adding the group Urunan Room, rent deposits and payouts verifiable by anyone onchain, KYC enforced by the smart contract, and no wallet or gas for the user.
+GORO is an Indonesian fractional-property platform that shows demand for owning property from small amounts with rent and resale, and we respect that work. We have not verified the details of its regulatory status (we have seen it described as an OJK Regulatory Sandbox graduate in Nov 2025, but we have no source to cite), so we make no claim about it. What URSSET tries differently, as a hackathon prototype and not a finished competitor: the group Urunan Room (one link, each friend's units in their own wallet), KYC checked by the token contract on every transfer, rent deposits and splits that anyone can check onchain, and a wallet-free, gas-free experience for the user.
 
 ## Tech stack
-- Contracts: Solidity, Foundry, OpenZeppelin 5.x. Seven contracts: `KYCRegistry`, `PropertyToken`, `RentDistributor`, `PrimarySale` (with rooms), `Marketplace`, `PropertyFactory`, `MockIDR`.
+- Contracts: Solidity, Foundry, OpenZeppelin 5.x. Seven contract types (each listed property creates four contracts: token, sale, rent distributor, marketplace): `KYCRegistry`, `PropertyToken`, `RentDistributor`, `PrimarySale` (with rooms), `Marketplace`, `PropertyFactory`, `MockIDR`.
 - Chain: Robinhood Chain Testnet (Ethereum L2 for tokenized assets), chain ID 46630.
 - Frontend: Next.js, React, wagmi, viem, TanStack Query, Tailwind CSS; Privy for email/Google login and embedded wallets; Vercel (hosting and Blob for photos).
 - Tests: 45 Foundry tests (including invariant and fuzz tests) plus an end-to-end script (`packages/nextjs/scripts/e2e.mjs`) that runs onboarding, Urunan Room, rent, resale and KYC rejection on the testnet.
@@ -56,7 +60,7 @@ Written during the hackathon: everything in `packages/foundry/contracts`, `packa
 Reused, with attribution: Scaffold-ETH 2 (project scaffold, Foundry setup, ABI generation tooling; example UI removed), OpenZeppelin Contracts 5.x (ERC-20, Ownable, SafeERC20), Foundry and forge-std, Privy (login, embedded wallets, token verification), and standard web libraries (Next.js, React, wagmi, viem, TanStack Query, Tailwind CSS, qrcode.react).
 
 ## Honest limits
-Testnet only. QRIS and KYC are simulations. `MockIDR` skips approvals as a test-token shortcut. One operator key verifies wallets, mints test Rupiah and deposits rent; in production this becomes a licensed KYC provider and the SPV's bank rent via a licensed payment provider.
+Contracts were redeployed during the build; the history (including why) is in `docs/DEPLOYMENTS.md`. Testnet only. QRIS and KYC are simulations. `MockIDR` skips approvals as a test-token shortcut. One operator key verifies and can un-verify wallets, mints test Rupiah and deposits rent; rent is split by a snapshot at deposit time, so someone could buy right before a deposit and sell right after (no contract-level mitigation yet); in production this becomes a licensed KYC provider and the SPV's bank rent via a licensed payment provider.
 
 ## Links
 - Live app: https://ursset.vercel.app
@@ -74,5 +78,8 @@ Contact/social: TODO: link (optional).
 ## How to judge it in 3 minutes
 1. Open https://ursset.vercel.app, pick a property, and tap through the three steps (sign in with any email, top up test Rupiah, Urunan). Units appear in your portfolio.
 2. In Portfolio, open "Lihat bukti di blockchain" on any transaction to see it on the explorer, and look at the rent history on the property page. Try sending units to a wallet that is not verified: the contract rejects it.
-3. In the repo, read `packages/foundry/contracts/PropertyToken.sol` (the `_update` hook enforces KYC on every transfer) and run `cd packages/foundry && forge test` (45 tests: KYC, invariants and fuzz, sale and rooms, pro rata rent, marketplace, factory). `packages/nextjs/scripts/e2e.mjs` runs the full flow against the testnet.
-4. The owner area (`/operator`, protected by an operator code) lists a property and deposits rent. Code available on request from the team: TODO: confirm how judges get access, or rely on the demo video.
+3. In the repo, read `packages/foundry/contracts/PropertyToken.sol` (the `_update` hook enforces the allow-list on every transfer) and run `cd packages/foundry && forge test` (45 tests: KYC, invariants and fuzz, sale and rooms, pro rata rent, marketplace, factory). `packages/nextjs/scripts/e2e.mjs` runs the full flow against the testnet.
+4. The owner area (`/operator`, protected by an operator code) lists a property and deposits rent.
+
+## How judges access the owner area
+The operator code is given through a private channel (HackQuest private message or direct message), never written in the repo or in this text. TODO: confirm the channel and send the code to the judges when they ask, or rely on the demo video.

@@ -4,7 +4,9 @@ App: https://ursset.vercel.app (Robinhood Chain Testnet, chain ID 46630). All mo
 
 Uploaded to the submission (English only): **A. Pitch video** and **B. Demo video**. Also here: **C. 60-second backup video**, **D. Live Demo Day run** (Sunday, Jakarta; Indonesian and English), **E. Pre-flight and recording checklist**, **F. Plan B**.
 
-Screens: Home `/`, Property `/p/[id]`, Room `/p/[id]/room/[roomId]`, Portfolio `/portfolio`, Manage `/operator` (`#listing`, `#rent`). The "Send units" action in Portfolio demonstrates the KYC rejection. With the app in English the proof link may read differently from "Lihat bukti di blockchain"; TODO: confirm the exact English label in the UI and use it in captions.
+Screens: Home `/`, Property `/p/[id]`, Room `/p/[id]/room/[roomId]`, Portfolio `/portfolio`, Manage `/operator` (`#listing`, `#rent`). The "Send units" action in Portfolio demonstrates the KYC rejection. With the app in English the proof button reads "View proof on blockchain" (Indonesian: "Lihat bukti di blockchain"); captions follow that label.
+
+Note: the contracts were redeployed during the build (history in `docs/DEPLOYMENTS.md`). The addresses in the README are the current ones. This is a testnet demo; no returns are promised and nothing here is an investment offer.
 
 ---
 
@@ -16,9 +18,9 @@ Record the deck from `docs/PITCH.md` (English version) with voice-over. Narratio
 |---|---|---|
 | 1 | 0:00-0:20 | "This is Rina, 24. She wants a share of a property, but her capital is small and crypto sounds complicated. URSSET, short for urunan asset, lets Rina and three friends pool money to buy part of a boarding house from Rp10,000 and receive its monthly rent. Three steps, no seed phrase." |
 | 2 | 0:20-0:45 | "Three barriers keep people out. Capital. Trust, because investors read rent reports they cannot check themselves. And complexity, because crypto products expect wallets and gas fees." |
-| 3 | 0:45-1:20 | "Sign in with email. Top up through QRIS. Tap Urunan. To pool money, create an Urunan Room, share one link, and each friend joins with their own amount. Units go straight to each person's wallet, so nobody holds anyone else's money. Every rent deposit leaves public proof anyone can open." |
+| 3 | 0:45-1:20 | "Sign in with email. Top up through QRIS. Tap Urunan. To pool money, create an Urunan Room, share one link, and each friend joins with their own amount. Units go straight to each person's wallet, so nobody holds anyone else's money. Every rent deposit leaves public proof anyone can open from the View proof on blockchain button." |
 | 4 | 1:20-1:50 | "Ownership, rent payouts and trades between investors happen on a public ledger the operator does not control, so investors can verify for themselves without trusting a database, while KYC rules are enforced directly by the smart contract. A transfer to an unverified wallet is rejected by the contract itself." |
-| 5 | 1:50-2:05 | "The property owner pays a listing fee, about 3 percent of funds raised. That is an assumption we still need to validate with owners. Investors pay no platform fee." |
+| 5 | 1:50-2:05 | "The property owner would pay a listing fee, about 3 percent of funds raised. For illustration, Rp500 million raised is Rp15 million, once. That is an unvalidated assumption, not in the contracts yet. Investors pay no platform fee, and recurring revenue is a later phase." |
 | 6 | 2:05-2:30 | "We do not claim to be compliant. The limit: tokens representing rights to property rent may be treated as financial products supervised by OJK, and payments in Indonesia must be in Rupiah. The path: the OJK Regulatory Sandbox, with the property held by a legal-entity SPV and Rupiah through a BI-licensed payment provider. For the hackathon: testnet, non-custodial, illustrative property data, no real user funds." |
 | 7 | 2:30-3:00 | "What exists is a product: seven contracts, 45 passing tests, and a live app. Market traction: we have no real users yet; this is a testnet demo. Next: a pilot with one real boarding house, the sandbox application, and a licensed payment partner. Try it at ursset.vercel.app. Thank you." |
 
@@ -27,6 +29,8 @@ Captions: one line per slide using the slide title. Show the URL on slide 7.
 ---
 
 ## B. Demo video (English, 2:00-3:00, target 2:40)
+
+Scene 6 note: the friend-joins scene (a second signed-in friend buying into the room) is replaced by a demonstration that the Urunan Room link, opened without logging in, goes straight to Sign in. Do not claim a second friend joined in the recording.
 
 Set up first: open the app, use the menu language switch (ID | EN) and select EN, then reload and confirm the UI is English. Record the screen at that point, so on-screen text and narration match. Never record in Indonesian for the upload.
 
@@ -37,10 +41,10 @@ Set up first: open the app, use the menu language switch (ID | EN) and select EN
 | 3 | 0:24-0:36 | Start Urunan, sign in with a fresh test email | "Step one: sign in with email. A wallet is created for you, with no seed phrase, and the app covers gas." | Step 1: Sign in |
 | 4 | 0:36-0:50 | Top up through QRIS, complete the identity check | "Step two: top up through QRIS and a light identity check. Both are simulated in this demo." | Step 2: Top up (simulated) |
 | 5 | 0:50-1:02 | Choose an amount, tap Urunan, wait for confirmation | "Step three: Urunan. One tap, and the units are in my wallet." | Step 3: Urunan |
-| 6 | 1:02-1:15 | Create an Urunan Room, copy the link, open it in a second window, friend joins with their own amount | "To pool with friends, create an Urunan Room and share the link. Each friend joins with their own amount, and units go to each wallet. Nobody holds anyone else's money." | Urunan Room |
+| 6 | 1:02-1:15 | Create an Urunan Room, copy the link, open it in a fresh logged-out window: it goes straight to Sign in | "To pool with friends, create an Urunan Room and share the link. A friend who opens it without being logged in lands on Sign in, then joins with their own amount, and units go to their own wallet. Nobody holds anyone else's money." | Urunan Room link opens at Sign in |
 | 7 | 1:15-1:30 | Manage, deposit rent: pick the property, enter the amount, deposit | "Now the property owner deposits the monthly rent." | Owner deposits rent |
 | 8 | 1:30-1:45 | Portfolio: rent received appears, claim it | "In my portfolio, rent is split pro rata by units. I just claim it." | Rent claimed |
-| 9 | 1:45-1:58 | Open the proof link on a transaction, show the explorer page | "Every transaction has a public proof. Anyone can check it without trusting our database." | Verify on the explorer |
+| 9 | 1:45-1:58 | Tap View proof on blockchain on a transaction, show the explorer page | "Every transaction has a public proof. Anyone can check the deposit and its split without trusting our database." | View proof on blockchain |
 | 10 | 1:58-2:12 | Portfolio, send units to an unverified wallet, show the rejection | "KYC is enforced by the contract. A transfer to an unverified wallet is rejected by the smart contract." | Contract rejects unverified wallet |
 | 11 | 2:12-2:28 | Manage, list a property: name, city, rooms, occupancy, value, photos, submit | "Owners can list a new property in a single transaction: name, city, rooms, value and photos." | List a property in one transaction |
 | 12 | 2:28-2:40 | Menu: switch language to Indonesian and back to Home | "The whole app also works in Indonesian." | Indonesian and English |

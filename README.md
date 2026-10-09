@@ -2,7 +2,7 @@
 
 # URSSET: urunan asset
 
-**3 langkah, kamu punya aset.** Urunan bareng teman beli bagian rumah kos, terima sewanya, dan jual lagi kapan saja.
+**3 langkah, kamu punya aset.** Urunan bareng teman beli bagian rumah kos, terima sewanya, dan unit dapat dijual ke investor terverifikasi (can be sold to verified investors).
 
 Built for the [Ethereum Jakarta Hackathon 2026](https://www.hackquest.io/hackathons/Ethereum-Jakarta-Hackathon-2026) (theme: Real-World Assets) on Robinhood Chain Testnet, an Ethereum L2.
 
@@ -32,15 +32,15 @@ A fractional rental-property app whose UX hides the blockchain but keeps every i
 On top of that:
 
 - **Urunan Room.** Create a room with a target, share one link, and friends join with their own amounts. Everyone receives units in their own wallet; nobody holds anyone else's money.
-- **Public rent history.** Every rent deposit and its pro rata split is an onchain event anyone can check ("Lihat bukti di blockchain" on every transaction).
-- **Resale.** Sell units to other verified investors at a price you set.
+- **Public rent history.** Every rent deposit and its pro rata split is an onchain event anyone can check ("Lihat bukti di blockchain" in Indonesian, "View proof on blockchain" in English, on every transaction). Rent deposits and their split can be checked; whether the rooms are really rented still depends on the operator/SPV and on audits, which is a risk we acknowledge.
+- **Resale.** Units can be sold to other verified investors at a price you set; liquidity is not guaranteed.
 - **List any property in one transaction.** The operator form (`/operator`) takes a name, city, rooms, value, description and photos, then `PropertyFactory` deploys that property's token, sale, rent distributor and marketplace and wires them together. Photos go to Vercel Blob (or paste image links).
 - **Two languages.** The whole UI switches between Indonesian and English from the header (ID | EN).
-- **Compliance in code.** Units can only move between wallets verified in the `KYCRegistry`. A transfer to an unverified wallet is rejected by the smart contract, not by the app.
+- **Allow-list enforcement in code.** (Not a claim of regulatory compliance.) Units can only move between wallets verified in the `KYCRegistry`. A transfer to an unverified wallet is rejected by the smart contract, not by the app.
 
 ## Why onchain
 
-Ownership, rent payouts and resale between investors happen on a public ledger the operator does not control, so investors can verify for themselves without trusting a database, while KYC rules are enforced directly by the contract.
+Ownership, rent payouts and resale between investors happen on a public ledger the operator does not control, so investors can verify for themselves without trusting a database, while KYC rules are enforced directly by the contract. The chain proves what was deposited and how it was split, not that the rooms were really rented.
 
 ## Architecture
 
@@ -59,6 +59,8 @@ Investor (Next.js app, Privy login)          Operator (server, Next.js API route
         |  MockIDR (tIDR)                        every transfer) |
         +--------------------------------------------------------+
 ```
+
+"7 contracts" means 7 contract types: each listed property creates 4 contracts (`PropertyToken`, `PrimarySale`, `RentDistributor`, `Marketplace`) through the factory, next to the 3 shared ones.
 
 | Contract | Role |
 | --- | --- |
@@ -147,21 +149,23 @@ Third-party code and services, with attribution:
 - **Test token shortcut.** `MockIDR` skips the approve step for the sale, marketplace and distributor so a purchase is one transaction. A production setup would use a licensed payment provider and normal approvals or permits.
 - **Operator is trusted.** One server key verifies wallets, mints test Rupiah and deposits rent. In production, KYC comes from a licensed provider and rent from the SPV's bank account via a licensed payment service provider.
 - **Legal structure.** In production the property is held by an SPV (PT); investors hold economic rights represented by the token, not the land certificate. The hash of legal documents is stored in the token. Tokenized property rights are likely regulated by OJK in Indonesia; the plan is the OJK Regulatory Sandbox route, as earlier property tokenization players took, with Rupiah in and out through a licensed payment provider.
+- **Contracts were redeployed.** An earlier deployment was replaced after a mistyped demo rent deposit; the history is in [`docs/DEPLOYMENTS.md`](docs/DEPLOYMENTS.md).
+- **Rent, tax and law (not settled).** Rent is likely subject to income tax and/or VAT; the legal standing of rent rights held in an SPV needs a clear legal structure; crypto-asset oversight in Indonesia has moved to OJK, so the rules may change. We have no legal or tax advice yet.
 - **Next:** pilot with one real boarding house, sandbox application, licensed payment partner, secondary-market fees, multiple properties.
 
 ## Business model
 
-Listing fee from the property owner (assumption: 3% of funds raised), because owners need capital for renovation or new rooms without bank collateral. Investors pay no platform fee. Secondary-market fees are a later phase.
+Listing fee from the property owner: about 3% of funds raised is an unvalidated assumption and is not implemented in the contracts. Illustration only: Rp500 million raised would mean Rp15 million per listing, paid once. Owners need capital for renovation or new rooms without bank collateral. Investors pay no platform fee. Recurring revenue (secondary-market fees, rent management) is a later phase.
 
 ## Security review
 
-An independent review of all 7 contracts (access control, reentrancy and ordering, rent rounding, KYC revocation, marketplace staleness) found **no way for a non-operator user to steal funds or units, take rent twice, or move units to an unverified wallet**. Property-based tests pin the invariants: rent owed plus claimed never exceeds deposited, balances sum to supply, units only sit in verified wallets or the sale contract, and a stranger can never receive units. 45 Foundry tests pass.
+This is a review by an AI agent, not a third-party audit and not a human audit firm. The agent reviewed all 7 contract types (access control, reentrancy and ordering, rent rounding, KYC revocation, marketplace staleness) and found **no way for a non-operator user to steal funds or units, take rent twice, or move units to an unverified wallet**. Property-based tests pin the invariants: rent owed plus claimed never exceeds deposited, balances sum to supply, units only sit in verified wallets or the sale contract, and a stranger can never receive units. 45 Foundry tests pass.
 
 Honest limits of this testnet demo (details and proposed fixes in [`docs/SECURITY.md`](docs/SECURITY.md)):
 
-- One operator key can verify or un-verify wallets, mint test Rupiah, and, through the test-token shortcut in `MockIDR`, move test tIDR without approval. This exists only because `MockIDR` is a test token.
+- A single operator key is a single point of failure: it can verify or un-verify wallets, mint test Rupiah, and, through the test-token shortcut in `MockIDR`, move test tIDR without approval. This exists only because `MockIDR` is a test token.
 - Un-verifying a holder freezes their units; rent they already earned stays claimable. A production design needs a recovery policy.
-- Rent is split with a snapshot at deposit time, so a wallet can buy units right before a deposit and sell right after (the operator can mitigate by depositing privately), and rounding can dust fractions of a rupiah.
+- Rent is split with a snapshot at deposit time, so a wallet can buy units right before a deposit and sell right after. We acknowledge this and have no contract-level mitigation (the operator can only reduce it by depositing privately), and rounding can dust fractions of a rupiah.
 - KYC is a boolean flag set by the operator; no real identity check happens in the demo.
 
 ## License
