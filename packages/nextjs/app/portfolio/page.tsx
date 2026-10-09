@@ -10,7 +10,10 @@ import { friendlyError, num, rp, short } from "~~/lib/format";
 import { useMe, useSaleInfo, useSend } from "~~/lib/hooks";
 import { property } from "~~/lib/property";
 
-type Notice = { tone: "ok" | "bad"; text: string; hash?: string };
+type Section = "claim" | "sell" | "market" | "send";
+type Notice = { tone: "ok" | "bad"; text: string; hash?: string; where: Section };
+
+const sectionOf = (key: string): Section => (key === "claim" || key === "sell" || key === "send" ? key : "market");
 
 export default function Portfolio() {
   const { authenticated, login } = usePrivy();
@@ -41,16 +44,34 @@ export default function Portfolio() {
     .map((l, i) => ({ id: ids[i], seller: l[0], units: l[1], unitPrice: l[2], active: l[3] }))
     .filter(l => l.active);
 
+  // Shows the result inside the card the user just acted on, so it is easy to notice.
+  function renderNotice(where: Section) {
+    if (!notice || notice.where !== where) return null;
+    return (
+      <div
+        className={`mt-3 rounded-xl p-3 text-sm ${notice.tone === "ok" ? "bg-brand-soft text-brand-dark" : "bg-red-50 text-red-700"}`}
+      >
+        {notice.text}{" "}
+        {notice.hash && (
+          <a className="font-semibold underline" href={txUrl(notice.hash)} target="_blank" rel="noreferrer">
+            Lihat bukti di blockchain
+          </a>
+        )}
+      </div>
+    );
+  }
+
   async function run(key: string, ok: string, fn: () => Promise<{ hash: string } | void>) {
+    const where = sectionOf(key);
     setBusy(key);
     setNotice(null);
     try {
       const res = await fn();
-      setNotice({ tone: "ok", text: ok, hash: res?.hash });
+      setNotice({ tone: "ok", text: ok, hash: res?.hash, where });
       me.refetch();
       void refetchListings();
     } catch (e) {
-      setNotice({ tone: "bad", text: friendlyError(e) });
+      setNotice({ tone: "bad", text: friendlyError(e), where });
     } finally {
       setBusy("");
     }
@@ -92,6 +113,7 @@ export default function Portfolio() {
         >
           {busy === "claim" ? "Memproses…" : "Ambil sewa"}
         </button>
+        {renderNotice("claim")}
       </section>
 
       <section className="card p-5">
@@ -132,6 +154,7 @@ export default function Portfolio() {
         >
           {busy === "sell" ? "Memproses…" : `Jual ${sellUnits} unit di ${rp(sellPrice)}`}
         </button>
+        {renderNotice("sell")}
       </section>
 
       <section className="card p-5">
@@ -178,6 +201,7 @@ export default function Portfolio() {
             );
           })}
         </ul>
+        {renderNotice("market")}
       </section>
 
       <section className="card p-5">
@@ -212,20 +236,8 @@ export default function Portfolio() {
             {busy === "send" ? "Memproses…" : "Kirim"}
           </button>
         </div>
+        {renderNotice("send")}
       </section>
-
-      {notice && (
-        <div
-          className={`rounded-xl p-3 text-sm ${notice.tone === "ok" ? "bg-brand-soft text-brand-dark" : "bg-red-50 text-red-700"}`}
-        >
-          {notice.text}{" "}
-          {notice.hash && (
-            <a className="font-semibold underline" href={txUrl(notice.hash)} target="_blank" rel="noreferrer">
-              Lihat bukti di blockchain
-            </a>
-          )}
-        </div>
-      )}
     </div>
   );
 }

@@ -1,83 +1,135 @@
-# 🏗 Scaffold-ETH 2
+# URSSET: urunan asset
 
-<h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
-</h4>
+**3 langkah, kamu punya aset.** Urunan bareng teman beli bagian rumah kos, terima sewanya, dan jual lagi kapan saja.
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+Built for the [Ethereum Jakarta Hackathon 2026](https://www.hackquest.io/hackathons/Ethereum-Jakarta-Hackathon-2026) (theme: Real-World Assets) on Robinhood Chain Testnet, an Ethereum L2.
 
-> [!NOTE]
-> 🤖 Scaffold-ETH 2 is AI-ready! It has everything agents need to build on Ethereum. Check `.agents/`, `.claude/`, `.opencode` or `.cursor/` for more info.
+| | |
+| --- | --- |
+| Live app | _TODO: Vercel URL_ |
+| Demo video | _TODO: video URL_ |
+| Chain | Robinhood Chain Testnet (chain ID 46630) |
+| Explorer | https://explorer.testnet.chain.robinhood.com |
 
-⚙️ Built using NextJS, RainbowKit, Foundry, Wagmi, Viem, and Typescript.
+> This is a hackathon demo on a test network. Property data is illustrative, "Rupiah" is a test token (tIDR), and nothing here is an investment offer or promises any return.
 
-- ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
-- 🪝 **[Custom hooks](https://docs.scaffoldeth.io/hooks/)**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://docs.scaffoldeth.io/components/): Collection of common web3 components to quickly build your frontend.
-- 🔥 **Burner Wallet & Local Faucet**: Quickly test your application with a burner wallet and local faucet.
-- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with the Ethereum network.
+## The problem
 
-![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/b237af0c-5027-4849-a5c1-2e31495cccb1)
+- Property needs large capital, so most young Indonesians are locked out.
+- On fractional platforms, money is often locked up and investors must trust the operator's rent reports.
+- Crypto-based products ask normal people to understand wallets, gas and seed phrases.
 
-## Requirements
+## What URSSET does
 
-Before you begin, you need to install the following tools:
+A fractional rental-property app whose UX hides the blockchain but keeps every important fact verifiable onchain.
 
-- [Node (>= v20.18.3)](https://nodejs.org/en/download/)
-- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
-- [Git](https://git-scm.com/downloads)
+1. **Masuk.** Sign in with email or Google. A wallet is created silently (Privy embedded wallet), no seed phrase, no gas.
+2. **Isi saldo.** Top up Rupiah (QRIS is simulated; the balance is test Rupiah). A light identity check marks the wallet as verified.
+3. **Urunan.** Pick an amount, tap once. You now own units of a rental property.
 
-## Quickstart
+On top of that:
 
-To get started with Scaffold-ETH 2, follow the steps below:
+- **Urunan Room.** Create a room with a target, share one link, and friends join with their own amounts. Everyone receives units in their own wallet; nobody holds anyone else's money.
+- **Public rent history.** Every rent deposit and its pro rata split is an onchain event anyone can check ("Lihat bukti di blockchain" on every transaction).
+- **Resale.** Sell units to other verified investors at a price you set.
+- **Compliance in code.** Units can only move between wallets verified in the `KYCRegistry`. A transfer to an unverified wallet is rejected by the smart contract, not by the app.
 
-1. Install dependencies if it was skipped in CLI:
+## Why onchain
+
+Ownership, rent payouts and resale between investors happen on a public ledger the operator does not control, so investors can verify for themselves without trusting a database, while KYC rules are enforced directly by the contract.
+
+## Architecture
 
 ```
-cd my-dapp-example
+Investor (Next.js app, Privy login)          Operator (server, Next.js API routes)
+   buy / sell / claim / create room            gas drip, KYC flag, mint tIDR, deposit rent
+              \                                       /
+               v                                     v
+        +--------------------------------------------------------+
+        |              Robinhood Chain Testnet (46630)           |
+        |                                                        |
+        |  PrimarySale   RentDistributor   Marketplace           |
+        |        \              |              /                 |
+        |         +---------> PropertyToken <--+----> KYCRegistry |
+        |                       (units)         (checked on      |
+        |  MockIDR (tIDR)                        every transfer) |
+        +--------------------------------------------------------+
+```
+
+| Contract | Role |
+| --- | --- |
+| `KYCRegistry` | Allow-list of verified wallets. Only an address and a boolean are stored, never personal data. |
+| `MockIDR` | Test Rupiah (tIDR, zero decimals). Simulates a balance topped up through a licensed payment provider. |
+| `PropertyToken` | ERC-20 units of one property (300,000 units). `_update` requires both sides to be verified. Stores the legal-document hash. |
+| `RentDistributor` | Splits rent deposits pro rata with an accumulator, so cost does not grow with the number of holders. Unsold inventory earns no rent. |
+| `PrimarySale` | Fixed-price primary sale (Rp10,000 per unit) and Urunan Rooms (target, progress, contributors). |
+| `Marketplace` | Non-custodial fixed-price resale. Units stay in the seller's wallet and keep earning rent until filled. |
+
+Contract addresses are written to [`packages/nextjs/lib/generated/ursset.ts`](packages/nextjs/lib/generated/ursset.ts) after each deploy. Current deployment: _TODO: list addresses with explorer links after the final deploy._
+
+## Run it locally
+
+Requirements: Node 20+, Yarn, [Foundry](https://book.getfoundry.sh/getting-started/installation).
+
+```bash
 yarn install
+cd packages/foundry && forge test            # 18 tests
+
+# Frontend
+cp packages/nextjs/.env.example packages/nextjs/.env.local   # then fill in the values
+yarn start                                                   # http://localhost:3000
 ```
 
-2. Run a local network in the first terminal:
+Deploy contracts to Robinhood Chain Testnet (needs testnet ETH from the [faucet](https://faucet.testnet.chain.robinhood.com)):
 
-```
-yarn chain
-```
-
-This command starts a local Ethereum network using Foundry. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `packages/foundry/foundry.toml`.
-
-3. On a second terminal, deploy the test contract:
-
-```
-yarn deploy
+```bash
+cd packages/foundry
+cp .env.example .env                         # add DEPLOYER_PRIVATE_KEY (testnet-only wallet)
+forge script script/Deploy.s.sol --rpc-url robinhood --private-key "$DEPLOYER_PRIVATE_KEY" --broadcast --ffi
+node scripts-js/exportUrsset.mjs 46630       # writes ABIs and addresses for the frontend
 ```
 
-This command deploys a test smart contract to the local network. The contract is located in `packages/foundry/contracts` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/foundry/script` to deploy the contract to the network. You can also customize the deploy script.
+Smoke test the deployed contracts with two throwaway investors (onboarding, Urunan Room, rent, resale, KYC rejection):
 
-4. On a third terminal, start your NextJS app:
-
-```
-yarn start
+```bash
+cd packages/nextjs && node scripts/e2e.mjs
 ```
 
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
+The domain of Robinhood Chain's RPC is blocked by some Indonesian ISPs. If calls fail with a TLS error, switch your DNS to `1.1.1.1`, or set `NEXT_PUBLIC_RPC_URL` to this app's own `/api/rpc` proxy.
 
-Run smart contract test with `yarn foundry:test`
+## Tests
 
-- Edit your smart contracts in `packages/foundry/contracts`
-- Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
-- Edit your deployment scripts in `packages/foundry/script`
+`packages/foundry/test/URSSET.t.sol` covers:
 
+- KYC: unverified buyers and receivers are rejected, revoked wallets cannot send.
+- Sale: payment and delivery, sold-out limit, Urunan Room progress and per-person ownership.
+- Rent: pro rata split, unsold inventory earns nothing, late buyers get no past rent, rent follows units after a transfer, only the operator can deposit.
+- Marketplace: sale, unverified buyer rejected, seller keeps earning rent while listed, only the seller can cancel.
 
-## Documentation
+## Built during the hackathon, and what we reused
 
-Visit our [docs](https://docs.scaffoldeth.io) to learn how to start building with Scaffold-ETH 2.
+Everything in `packages/foundry/contracts`, `packages/foundry/test`, `packages/foundry/script/Deploy.s.sol`, `packages/foundry/scripts-js/exportUrsset.mjs`, and `packages/nextjs` (pages, components, API routes, hooks) was written during the hackathon.
 
-To know more about its features, check out our [website](https://scaffoldeth.io).
+Third-party code and services, with attribution:
 
-## Contributing to Scaffold-ETH 2
+- [Scaffold-ETH 2](https://github.com/scaffold-eth/scaffold-eth-2) (project scaffold, Foundry setup and `generateTsAbis` tooling). Its example UI was removed.
+- [OpenZeppelin Contracts](https://github.com/OpenZeppelin/openzeppelin-contracts) 5.x (ERC-20, Ownable, SafeERC20).
+- [Foundry](https://github.com/foundry-rs/foundry) and forge-std.
+- [Privy](https://www.privy.io) (email and Google login, embedded wallets, server-side token verification).
+- Next.js, React, wagmi, viem, TanStack Query, Tailwind CSS, qrcode.react.
 
-We welcome contributions to Scaffold-ETH 2!
+## Limits, and what comes next
 
-Please see [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-ETH 2.
+- **Testnet only.** Rupiah is simulated with a test token; the QRIS top-up is a simulation. The identity check is a demo flag and no personal data is collected.
+- **Test token shortcut.** `MockIDR` skips the approve step for the sale, marketplace and distributor so a purchase is one transaction. A production setup would use a licensed payment provider and normal approvals or permits.
+- **Operator is trusted.** One server key verifies wallets, mints test Rupiah and deposits rent. In production, KYC comes from a licensed provider and rent from the SPV's bank account via a licensed payment service provider.
+- **Legal structure.** In production the property is held by an SPV (PT); investors hold economic rights represented by the token, not the land certificate. The hash of legal documents is stored in the token. Tokenized property rights are likely regulated by OJK in Indonesia; the plan is the OJK Regulatory Sandbox route, as earlier property tokenization players took, with Rupiah in and out through a licensed payment provider.
+- **Next:** pilot with one real boarding house, sandbox application, licensed payment partner, secondary-market fees, multiple properties.
+
+## Business model
+
+Listing fee from the property owner (assumption: 3% of funds raised), because owners need capital for renovation or new rooms without bank collateral. Investors pay no platform fee. Secondary-market fees are a later phase.
+
+## License
+
+MIT, see [LICENCE](LICENCE).
