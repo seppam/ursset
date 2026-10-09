@@ -97,7 +97,7 @@ Two parallel versions with the same slide numbering: `## Versi Indonesia` (Demo 
 **Judul:** Yang sudah jalan, dan yang kami butuhkan
 
 **Di slide**
-- Sudah dibangun: 7 kontrak, 26 tes Foundry lulus, skrip end-to-end di testnet, aplikasi hidup dua bahasa.
+- Sudah dibangun: 7 kontrak, 45 tes Foundry lulus, skrip end-to-end di testnet, aplikasi hidup dua bahasa.
 - Traksi pasar: TODO waitlist (jumlah), TODO wawancara (jumlah), TODO pemilik kos pilot (status).
 - Berikutnya: pilot satu kos nyata, aplikasi sandbox OJK, mitra pembayaran berlisensi, biaya pasar sekunder, banyak properti.
 - Ajakan: mentor regulasi dan pemilik kos.

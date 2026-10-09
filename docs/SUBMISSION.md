@@ -74,5 +74,5 @@ Contact/social: TODO: link (optional).
 ## How to judge it in 3 minutes
 1. Open https://ursset.vercel.app, pick a property, and tap through the three steps (sign in with any email, top up test Rupiah, Urunan). Units appear in your portfolio.
 2. In Portfolio, open "Lihat bukti di blockchain" on any transaction to see it on the explorer, and look at the rent history on the property page. Try sending units to a wallet that is not verified: the contract rejects it.
-3. In the repo, read `packages/foundry/contracts/PropertyToken.sol` (the `_update` hook enforces KYC on every transfer) and run `cd packages/foundry && forge test` (26 tests: KYC, sale and rooms, pro rata rent, marketplace, factory). `packages/nextjs/scripts/e2e.mjs` runs the full flow against the testnet.
+3. In the repo, read `packages/foundry/contracts/PropertyToken.sol` (the `_update` hook enforces KYC on every transfer) and run `cd packages/foundry && forge test` (45 tests: KYC, invariants and fuzz, sale and rooms, pro rata rent, marketplace, factory). `packages/nextjs/scripts/e2e.mjs` runs the full flow against the testnet.
 4. The owner area (`/operator`, protected by an operator code) lists a property and deposits rent. Code available on request from the team: TODO: confirm how judges get access, or rely on the demo video.

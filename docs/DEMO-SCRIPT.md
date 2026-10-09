@@ -44,7 +44,7 @@ Set up first: open the app, use the menu language switch (ID | EN) and select EN
 | 10 | 1:58-2:12 | Portfolio, send units to an unverified wallet, show the rejection | "KYC is enforced by the contract. A transfer to an unverified wallet is rejected by the smart contract." | Contract rejects unverified wallet |
 | 11 | 2:12-2:28 | Manage, list a property: name, city, rooms, occupancy, value, photos, submit | "Owners can list a new property in a single transaction: name, city, rooms, value and photos." | List a property in one transaction |
 | 12 | 2:28-2:40 | Menu: switch language to Indonesian and back to Home | "The whole app also works in Indonesian." | Indonesian and English |
-| 13 | 2:40-2:50 | End card: logo, ursset.vercel.app, github.com/seppam/ursset | "This is a testnet demo, not an investment offer. Try it at ursset.vercel.app. The code and 26 tests are on GitHub." | Testnet only. Not an investment offer. |
+| 13 | 2:40-2:50 | End card: logo, ursset.vercel.app, github.com/seppam/ursset | "This is a testnet demo, not an investment offer. Try it at ursset.vercel.app. The code and 45 tests are on GitHub." | Testnet only. Not an investment offer. |
 
 Links in the submission: TODO: pitch video URL, TODO: demo video URL.
 
