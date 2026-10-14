@@ -26,7 +26,9 @@ export default function Home() {
           {t("kamu punya aset.")}
         </h1>
         <p className="mt-2 max-w-xl text-white/90">
-          {t("Urunan bareng teman beli bagian rumah kos, terima sewanya tiap bulan, dan jual lagi kapan saja.")}
+          {t(
+            "Urunan bareng teman beli bagian rumah kos, terima sewanya tiap bulan, dan unit dapat dijual ke investor terverifikasi.",
+          )}
         </p>
         <a
           href="#properti"

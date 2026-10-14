@@ -15,7 +15,8 @@ export const metadata: Metadata = {
     apple: "/apple-icon.png",
   },
   title: "URSSET: urunan asset",
-  description: "3 langkah, kamu punya aset. Urunan bareng teman beli rumah kos, terima sewa, jual kapan saja.",
+  description:
+    "3 langkah, kamu punya aset. Urunan bareng teman beli rumah kos, terima sewa, unit dapat dijual ke investor terverifikasi.",
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#0f9d6e" };

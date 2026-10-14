@@ -93,7 +93,9 @@ function Detail() {
           <ul className="mt-2 space-y-1.5 text-muted">
             <li>{t("Kamu membeli unit; 1 unit = bagian kecil properti ini.")}</li>
             <li>{t("Sewa bulanan yang disetor pemilik dibagi sesuai jumlah unitmu.")}</li>
-            <li>{t("Jual unit kapan saja di pasar sekunder lewat Portofolio.")}</li>
+            <li>
+              {t("Jual unit ke investor terverifikasi di pasar sekunder lewat Portofolio (likuiditas tidak dijamin).")}
+            </li>
           </ul>
         </section>
 

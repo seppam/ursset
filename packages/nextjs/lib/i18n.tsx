@@ -29,8 +29,8 @@ const en: Record<string, string> = {
   "Kamu membeli unit; 1 unit = bagian kecil properti ini.": "You buy units; 1 unit = a small share of this property.",
   "Sewa bulanan yang disetor pemilik dibagi sesuai jumlah unitmu.":
     "Monthly rent deposited by the owner is split by how many units you hold.",
-  "Jual unit kapan saja di pasar sekunder lewat Portofolio.":
-    "Sell units any time on the secondary market via Portfolio.",
+  "Jual unit ke investor terverifikasi di pasar sekunder lewat Portofolio (likuiditas tidak dijamin).":
+    "Sell units to verified investors on the secondary market via Portfolio (liquidity is not guaranteed).",
   "Belum ada unit": "No units yet",
   Portofolio: "Portfolio",
   Masuk: "Sign in",
@@ -45,8 +45,8 @@ const en: Record<string, string> = {
   "Demo · jaringan uji": "Demo · test network",
   "3 langkah,": "3 steps,",
   "kamu punya aset.": "you own an asset.",
-  "Urunan bareng teman beli bagian rumah kos, terima sewanya tiap bulan, dan jual lagi kapan saja.":
-    "Chip in with friends to buy a share of a boarding house, receive the rent every month, and sell any time.",
+  "Urunan bareng teman beli bagian rumah kos, terima sewanya tiap bulan, dan unit dapat dijual ke investor terverifikasi.":
+    "Chip in with friends to buy a share of a boarding house, receive the rent every month, and units can be sold to verified investors.",
   "Email atau Google, 10 detik": "Email or Google, 10 seconds",
   "Isi saldo": "Top up",
   "QRIS, mulai Rp10 ribu": "QRIS, from Rp10k",
@@ -143,8 +143,7 @@ const en: Record<string, string> = {
   "Ambil sewa": "Claim rent",
   "Sewa masuk ke saldomu.": "Rent was added to your balance.",
   "Jual unit": "Sell units",
-  "Pasang harga, investor terverifikasi lain bisa membeli kapan saja.":
-    "Set a price and other verified investors can buy any time.",
+  "Pasang harga, investor terverifikasi lain bisa membeli.": "Set a price and other verified investors can buy.",
   "Harga per unit (Rp)": "Price per unit (Rp)",
   "Jual {n} unit di {price}": "Sell {n} units at {price}",
   "Penawaran dipasang.": "Listing created.",

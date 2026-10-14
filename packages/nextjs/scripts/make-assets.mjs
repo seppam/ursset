@@ -36,7 +36,7 @@ const social = `
   <text x="270" y="170" font-family="${FONT}" font-size="64" font-weight="900" letter-spacing="-1" fill="#fff">URSSET</text>
   <text x="80" y="330" font-family="${FONT}" font-size="92" font-weight="900" letter-spacing="-2" fill="#fff">3 langkah,</text>
   <text x="80" y="430" font-family="${FONT}" font-size="92" font-weight="900" letter-spacing="-2" fill="#fff">kamu punya aset.</text>
-  <text x="80" y="510" font-family="${FONT}" font-size="34" fill="#d5f3e6">Urunan bareng teman beli rumah kos, terima sewa, jual kapan saja.</text>
+  <text x="80" y="510" font-family="${FONT}" font-size="34" fill="#d5f3e6">Urunan bareng teman beli rumah kos dan terima sewanya.</text>
   <text x="80" y="575" font-family="${FONT}" font-size="28" font-weight="700" fill="${COIN}">RWA di Robinhood Chain · Ethereum Jakarta Hackathon 2026</text>
 </svg>`;
 

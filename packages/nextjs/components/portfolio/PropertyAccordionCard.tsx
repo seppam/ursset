@@ -167,9 +167,7 @@ export function PropertyAccordionCard(p: CardViewProps) {
 
             <section className="py-4">
               <SubHeading>{t("Jual unit")}</SubHeading>
-              <p className="text-sm text-muted">
-                {t("Pasang harga, investor terverifikasi lain bisa membeli kapan saja.")}
-              </p>
+              <p className="text-sm text-muted">{t("Pasang harga, investor terverifikasi lain bisa membeli.")}</p>
               <div className="mt-3 grid grid-cols-2 gap-2">
                 <label className="text-xs font-semibold text-muted">
                   {t("Jumlah unit")}
