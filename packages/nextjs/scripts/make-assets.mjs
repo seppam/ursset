@@ -32,7 +32,9 @@ const social = `
   <rect width="1200" height="630" fill="url(#bg)"/>
   <circle cx="1040" cy="110" r="220" fill="#ffffff" opacity="0.07"/>
   <circle cx="1120" cy="560" r="160" fill="#ffffff" opacity="0.06"/>
-  <g transform="translate(80,80) scale(0.34)">${mark(512, true).replace(/<\/?svg[^>]*>/g, "").replace(/url\(#g\)/, "#ffffff22")}</g>
+  <g transform="translate(80,80) scale(0.34)">${mark(512, true)
+    .replace(/<\/?svg[^>]*>/g, "")
+    .replace(/url\(#g\)/, "#ffffff22")}</g>
   <text x="270" y="170" font-family="${FONT}" font-size="64" font-weight="900" letter-spacing="-1" fill="#fff">URSSET</text>
   <text x="80" y="330" font-family="${FONT}" font-size="92" font-weight="900" letter-spacing="-2" fill="#fff">3 langkah,</text>
   <text x="80" y="430" font-family="${FONT}" font-size="92" font-weight="900" letter-spacing="-2" fill="#fff">kamu punya aset.</text>

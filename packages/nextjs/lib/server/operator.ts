@@ -88,6 +88,8 @@ export async function requireUser(req: Request, address: unknown): Promise<{ add
   const claims = await privy.verifyAuthToken(token).catch(() => {
     throw new HttpError(401, "Sesi tidak valid, masuk lagi");
   });
+  // getUser(userId) is deprecated (stricter rate limits); the idToken form needs a client change, so it is kept for now.
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   const user = await privy.getUser(claims.userId);
   const owns = user.linkedAccounts.some(
     a => a.type === "wallet" && "address" in a && a.address.toLowerCase() === address.toLowerCase(),
